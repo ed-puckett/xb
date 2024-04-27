@@ -1,0 +1,17 @@
+dialog {
+    border-radius: 0.5em;
+    box-shadow: 3px 3px 16px grey;
+}
+
+dialog button,
+dialog input[type="button"] {
+    margin: 1.75em 0 0 0;
+}
+
+dialog .dialog_decline {
+    display: inline;
+}
+
+dialog .dialog_accept {
+    display: inline;
+}

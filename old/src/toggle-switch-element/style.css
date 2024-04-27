@@ -1,0 +1,16 @@
+toggle-switch {
+    appearance: none;
+    border: 0;
+    width:  1.5rem;
+    height: 1.5rem;
+}
+
+toggle-switch svg {
+    width:  auto;
+    height: 100%;
+}
+
+toggle-switch                      svg .accent-fill   { fill:   transparent; }
+toggle-switch                      svg .accent-stroke { stroke: hsl(0deg 9% 82% / 100%); }
+toggle-switch[aria-checked="true"] svg .accent-fill   { fill:   transparent; }
+toggle-switch[aria-checked="true"] svg .accent-stroke { stroke: hsl(0deg 60% 70% / 100%); }

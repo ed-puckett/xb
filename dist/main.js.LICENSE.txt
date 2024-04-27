@@ -1,0 +1,52 @@
+/*!!! always warn for now !!!*/
+
+/*!!! autoeval: {
+                initial: this.autoeval,
+                on: (event) => {
+                    this.set_autoeval(!this.autoeval);
+                    return true;
+                }, !!!*/
+
+//!!!
+
+//!!! audit this !!!
+
+//!!! could use structuredClone(), but would that prevent remove() from finding?
+
+//!!! event handler never removed
+
+//!!! for debugging from console
+
+//!!! implement this
+
+//!!! improve #ui
+
+//!!! incorrect comparison
+
+//!!! never unsubscribed
+
+//!!! no stats
+
+//!!! options is not copied, and yet is used later
+
+//!!! should be configurable
+
+//!!! should other members of options be checked (e.g., "once")?
+
+//!!! this is too eager...
+
+//!!! this needs improvement
+
+//!!! this will reset the user's theme setting if not dark or light (the default)
+
+//!!! this.#eval_states_subscription is never unsubscribed
+
+//!!! this.#menubar_commands_subscription is never unsubscribed
+
+//!!! this.#menubar_selects_subscription is never unsubscribed
+
+//!!! until we figure out how to detect a changed document
+
+//!!! what a kludge...
+
+//!!! when repositioning the viewport, try to ensure that the entire cell-container, especially the tool-bar, is visible and not just the editor portion

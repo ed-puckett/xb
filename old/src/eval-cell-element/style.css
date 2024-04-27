@@ -1,0 +1,23 @@
+eval-cell {
+    background-color: white;
+
+    outline: 0px solid transparent;  /* disable default outline */
+
+    white-space: pre-wrap;  /* properly display white-space */
+    font-family: monospace;
+    line-height: 140%;
+
+    display: block;
+    margin:  0;
+    padding: 0.3em 0.5em;
+}
+
+.eval-cell-output {
+    display: block;
+    padding: 0.5em;
+
+    white-space: pre-wrap;  /* properly display white-space */
+    line-height: 140%;
+
+    background-color: white;
+}

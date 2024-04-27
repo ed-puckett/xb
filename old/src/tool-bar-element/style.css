@@ -1,0 +1,36 @@
+tool-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5em;
+    padding: 0 0.5em;
+}
+
+tool-bar > * {
+    margin: 0;  /* pack controls within tool-bar; let flex gap handle spacing */
+    background-color: hsl(0deg 0% 98% / 100%);
+}
+
+.tool-bar-indicator {
+    display: block;
+    width:  0.5em;
+    height: 0.5em;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid hsl(0deg 9% 82% / 100%);
+    background-color: hsl(0deg 0% 97% / 100%);
+}
+
+.tool-bar-indicator.running[data-indicator-value="on"] {
+    border: 1px solid black;
+    background-color: hsl(120deg 94% 40% / 100%);
+}
+.tool-bar-indicator.modified[data-indicator-value="on"] {
+    border: 1px solid black;
+    background-color: hsl(0deg 60% 85% / 100%);
+}
+
+tool-bar > select > option {
+    background-color: hsl(0deg 0% 97% / 100%);
+}

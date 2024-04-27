@@ -1,0 +1,564 @@
+/* all other stylesheets have been incorporated into this one (except no editor-cell-element) */
+
+/* See settings/theme-settings.js for definition of --theme-* properties */
+
+:root {
+    --input-output-split: 50vw;  /* must specify absolute amount, not %, otherwise .resize-handle will be misaligned */
+
+    --is-stacked: ;  /* is input/output displayed stacked or side-by-side (default) */
+
+    --resize-handle-size:          8px;   /* handle is a downward-pointing triangle with this height and twice this width */
+    --resize-handle-hairline-size: 1px;   /* (half) width of hairline displayed when dragging resize-handle */
+
+    --resize-handle-center-h: calc(var(--input-output-split) + (2 * var(--theme-cl-bdw)));
+}
+
+body {
+    overflow: hidden;  /* inhibit scrolling for body */
+    margin: 0;
+    background-color: var(--theme-by-bgc);
+}
+
+header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    height: var(--theme-hd-h);
+    background-color: var(--theme-hd-bgc);
+}
+
+header > tool-bar {  /* next to menu */
+    visibility: visible;
+    align-self: center;
+
+    max-height: fit-content;
+    padding: 0 0.5em;
+    border: 0;
+    background-color: transparent;  /* use underlying color from header */
+}
+
+main {
+    margin: 2px 0 0 1px;  /* prevent top and left borders from getting absorbed into surrounding element */
+
+    /* enable scrolling for main element */
+    overflow: auto;
+    max-height: calc(100vh - var(--theme-hd-h));
+    max-width:  100vw;
+}
+main > :first-child {
+    padding-top: 0;
+}
+main > :not(:first-child) {
+    padding-top: var(--theme-cl-p-inter);
+}
+
+.cell-container {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+
+.cell-input-container {
+    overflow: hidden;
+
+    border-width:  var(--theme-cl-bdw);
+    border-radius: var(--theme-cl-bdr);
+    border-style:  var(--theme-cl-bds);
+    border-color:  var(--theme-cl-bdc);
+}
+.cell-container[data-active] .cell-input-container {
+    border-color:  var(--theme-cl-bdc-active);
+}
+.cell-container[data-active]:focus-within .cell-input-container {
+    border-color:  var(--theme-cl-bdc-focus);
+}
+
+.resize-handle {
+    position: absolute;
+    left: calc(var(--resize-handle-center-h) - var(--resize-handle-size));
+    /* form a down-pointing arrow with a centered tip */
+    border-style: solid;
+    border-color: var(--theme-rh-bgc) transparent transparent transparent;
+    border-width: var(--resize-handle-size) var(--resize-handle-size) 0 var(--resize-handle-size);
+ }
+.resize-handle:hover,
+.resize-handle.dragging {
+    border-color: var(--theme-rh-bgc-hover) transparent transparent transparent;
+}
+.resize-handle:hover::after,
+.resize-handle.dragging::after {
+    content: " ";
+    position: absolute;
+    left: calc(0px - var(--resize-handle-hairline-size));
+    min-width: calc(2 * var(--resize-handle-hairline-size));
+    max-width: calc(2 * var(--resize-handle-hairline-size));
+    min-height: 100vh;
+    background-color: var(--theme-rh-bgc-hover);
+}
+
+.collapse-cells tool-bar,
+.collapse-cells eval-cell {
+    display: none;
+}
+.collapse-cells .cell-input-container {
+    border: 0;
+}
+
+.cell-input-container {
+    min-width: var(--input-output-split);
+    max-width: var(--input-output-split);
+}
+
+@media screen and (max-width: 40em) {
+    /* responsive: input/output stacked vs side-by-side */
+
+    :root {
+        --is-stacked: yes;
+    }
+
+    .cell-container {
+        flex-direction: column;
+    }
+    .cell-input-container {
+        min-width: unset;
+        max-width: unset;
+    }
+    .resize-handle {
+        display: none;
+    }
+}
+
+.eval-cell-output {
+    display: block;
+    overflow: auto;  /* enable h/v scrolling */
+
+    height: fit-content;
+
+    padding: var(--theme-ou-p);
+    color:            var(--theme-ou-fgc);
+    background-color: var(--theme-ou-bgc);
+}
+.eval-cell-output:empty,
+.eval-cell-output:not(:has(> *:not(:empty))) {
+    display: none;
+}
+
+.plain-text {
+    white-space: pre-wrap;  /* display white-space properly */
+    line-height: 140%;
+}
+
+tool-bar {
+    overflow: hidden;
+
+    visibility: visible;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--theme-tl-g);
+
+    max-height: fit-content;
+    padding: var(--theme-tl-p);
+    border: 0;
+
+    background-color: var(--theme-tl-bgc);
+}
+
+eval-cell {
+    overflow: hidden;
+
+    display: block;
+    margin:  0;
+
+    caret-color: var(--theme-cl-ctc);
+    outline: 0px solid transparent;  /* disable default contenteditable outline */
+
+    white-space: pre-wrap;  /* properly display white-space */
+    font-family: var(--theme-cl-ff);
+    line-height: var(--theme-cl-lh);
+
+    color:            var(--theme-cl-fgc);
+    background-color: var(--theme-cl-bgc);
+
+    max-height:   fit-content;
+    padding:      var(--theme-cl-p);
+    border-width: 0;
+    border-top-color:    transparent;
+    border-left-color:   var(--theme-cl-bdc);
+    border-bottom-color: var(--theme-cl-bdc);
+    border-right-color:  var(--theme-cl-bdc);
+
+    border-radius: 0 0 var(--theme-cl-bdr) var(--theme-cl-bdr);
+    border-style:  var(--theme-cl-bds);
+}
+
+eval-cell > textarea {
+    color:            var(--theme-cl-fgc);
+    background-color: var(--theme-cl-bgc);
+    resize: none;  /* remove resize control */
+    outline: none;  /* handled by parent eval-cell */
+    width: 100%;
+    padding: 0 0 1px 0;  /* 1px on bottom to prevent "_" from being hidden on bottom line */
+    border: 0;
+    margin: 0;
+}
+
+
+/* color selected by eval-cell input-type */
+
+tool-bar select {
+    border-radius: 0.5rem 0.5rem 0 0 / 30% 30% 0 0;
+    border-width: 0;
+}
+
+tool-bar select,  /* markdown is default */
+tool-bar > select:has(> option[value="markdown"]:checked) {
+    color:            var(--theme-ty-fgc-markdown);
+    background-color: var(--theme-ty-bgc-markdown);
+}
+
+tool-bar > select:has(> option[value="javascript"]:checked) {
+    color:            var(--theme-ty-fgc-javascript);
+    background-color: var(--theme-ty-bgc-javascript);
+}
+
+tool-bar > select:has(> option[value="tex"]:checked) {
+    color:            var(--theme-ty-fgc-tex);
+    background-color: var(--theme-ty-bgc-tex);
+}
+
+tool-bar option {
+    color: initial;  /* setting other color causes poor drop-down list display; seen in Chromium 116 */
+}
+
+tool-bar:has(option),  /* markdown is default */
+tool-bar:has(option[value="markdown"]:checked) {
+    border-bottom-color: var(--theme-ty-bgc-markdown);
+    background-color: color-mix(in srgb, var(--theme-tl-bgc), var(--theme-ty-bgc-markdown) var(--theme-tl-bgc-mix));
+}
+
+tool-bar:has(option[value="javascript"]:checked) {
+    border-bottom-color: var(--theme-ty-bgc-javascript);
+    background-color: color-mix(in srgb, var(--theme-tl-bgc), var(--theme-ty-bgc-javascript) var(--theme-tl-bgc-mix));
+}
+
+tool-bar:has(option[value="tex"]:checked) {
+    border-bottom-color: var(--theme-ty-bgc-tex);
+    background-color: color-mix(in srgb, var(--theme-tl-bgc), var(--theme-ty-bgc-tex) var(--theme-tl-bgc-mix));
+}
+
+
+/* === tool-bar indicators and controls === */
+
+tool-bar > * {
+    margin: 0;  /* pack controls within tool-bar; let flex gap handle spacing */
+}
+
+.tool-bar-indicator {
+    display: block;
+    width:  0.5em;
+    height: 0.5em;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--theme-ti-bdc);
+    background-color: var(--theme-ti-bgc);
+}
+
+.tool-bar-indicator.running[data-indicator-value="on"] {
+    border: 1px solid var(--theme-ti-bdc-running);
+    background-color: var(--theme-ti-bgc-running);
+}
+.tool-bar-indicator.modified[data-indicator-value="on"] {
+    border: 1px solid var(--theme-ti-bdc-modified);
+    background-color: var(--theme-ti-bgc-modified);
+}
+
+tool-bar > select > option {
+    background-color: var(--theme-ty-bgc);
+}
+
+
+/* === toggle-switch === */
+
+toggle-switch {
+    appearance: none;
+    border: 0;
+    width:  var(--theme-ts-w);
+    height: var(--theme-ts-h);
+}
+
+toggle-switch svg {
+    width:  auto;
+    height: 100%;
+    background-color: transparent;
+}
+
+toggle-switch.tool-bar-toggle-autoeval                      svg .accent-fill   { fill:   var(--theme-ts-flc-autoeval); }
+toggle-switch.tool-bar-toggle-autoeval                      svg .accent-stroke { stroke: var(--theme-ts-stc-autoeval); }
+toggle-switch.tool-bar-toggle-autoeval[aria-checked="true"] svg .accent-fill   { fill:   var(--theme-ts-flc-autoeval-checked); }
+toggle-switch.tool-bar-toggle-autoeval[aria-checked="true"] svg .accent-stroke { stroke: var(--theme-ts-stc-autoeval-checked); }
+
+
+/* theme-aware graphics */
+
+[data-type="graphviz"] svg polygon {
+    fill:   var(--theme-gr-bgc);
+    stroke: var(--theme-gr-fgc);
+}
+[data-type="graphviz"] svg path,
+[data-type="graphviz"] svg ellipse {
+    stroke: var(--theme-gr-fgc);
+}
+[data-type="graphviz"] svg text {
+    fill: var(--theme-gr-fgc);
+}
+
+
+/* === menu === */
+
+.menu:not(.active) {
+    display: none;
+}
+
+.menubar {
+    margin: 0;
+    padding: 0.1rem 0 0.1rem 0;
+    background-color: var(--theme-mu-bgc);
+}
+
+.menubar > li {
+    display: inline;  /* horizontal orientation for top-level items of menubar */
+    padding: 0 0.5rem 0 0.5rem;
+}
+
+.menubar .menuitem {
+    list-style-type: none;
+    min-width: max-content;
+}
+
+.menuitem * {
+    user-select: none;
+}
+
+.menuitem .menuitem-label {
+    font-family: sans-serif;
+    font-size: 90%;
+}
+
+.menubar .menuitem.checked::before {
+    content: "\2713";  /* unicode check mark */
+    position: absolute;
+    left: 0.5em;
+}
+
+.menubar div {
+    display: inline;
+}
+
+.menu {
+    position: absolute;
+    z-index: 999;
+    background-color: var(--theme-mu-bgc);
+    padding: 0.25rem 0 0.25rem 0;  /* override standard ul/li padding */
+    border-radius: 0.25rem;
+    border: 1px solid var(--theme-mu-bdc);
+    box-shadow: 3px 3px 16px var(--theme-mu-shc);
+
+    /* eliminate default styling for menu elements */
+    margin-block-start:   0;
+    margin-block-end:     0;
+    margin-inline-start:  0;
+    margin-inline-end:    0;
+    padding-inline-start: 0;
+}
+
+.menuitem {
+    color: var(--theme-mi-fgc);
+}
+
+.menuitem.disabled {
+    color: var(--theme-mi-fgc-disabled);
+}
+
+.menuitem.selected {
+    background-color: var(--theme-mi-bgc-selected);
+}
+
+.menu .menuitem:not(.menuitem-separator) {
+    padding: 0 0.5rem 0 1.5rem;
+}
+
+.menu .menuitem.menuitem-separator {
+    margin: 0.2rem 0 0.2rem 0;
+    height: 0px;
+    color: transparent;
+    border-bottom: 1px solid var(--theme-ms-bgc);
+}
+
+.menu .menuitem .menuitem-annotation {
+    margin-left: 2rem;
+    float: right;
+}
+
+.menu .menuitem kbd {
+    margin: 0 0 0 0.5rem;
+}
+
+
+/* === dialog === */
+
+dialog {
+    border-radius: 0.5em;
+    box-shadow: 3px 3px 16px var(--theme-dg-shc);
+}
+
+dialog button,
+dialog input[type="button"] {
+    margin: 1.75em 0 0 0;
+}
+
+dialog .dialog_decline {
+    display: inline;
+}
+
+dialog .dialog_accept {
+    display: inline;
+}
+
+
+/* === settings-dialog === */
+
+.settings-dialog {
+    background-color: var(--theme-st-bgc);
+}
+
+.settings-dialog .dialog-text {
+    font-style: italic;
+}
+
+.settings-dialog [data-section] {
+    position: relative;
+    display: grid;
+    grid-template-columns: min-content min-content;
+    min-width: max-content;
+    margin: 1.75em 0 0 0;
+    padding: 1em 0.5em 0.5em;
+    border-radius: 8px;
+    border: 1px solid var(--theme-st-bdc-section);
+    color:            var(--theme-st-fgc-section);
+    background-color: var(--theme-st-bgc-section);
+}
+
+.settings-dialog [data-section]::before {  /* named section heading */
+    position: absolute;
+    content: attr(data-section);
+    left: 0.8em;
+    top: -0.7em;
+    padding: 0 1em;
+    border-radius: 4px;
+    border: 1px solid var(--theme-st-bdc-section-heading);
+    color:            var(--theme-st-fgc-section-heading);
+    background-color: var(--theme-st-bgc-section-heading);
+    font-style: italic;
+}
+
+.settings-dialog [data-section] label {
+    align-self: center;
+    justify-self: end;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.settings-dialog [data-section] input,
+.settings-dialog [data-section] select {
+    align-self: center;
+    justify-self: start;
+    color:            var(--theme-st-fgc-section-setting);
+    background-color: var(--theme-st-bgc-section-setting);
+    margin: 0.25em;
+}
+
+.settings-dialog [data-section] input[type="text"] {
+    width: 5em;
+}
+
+.settings-dialog .warning {
+    display: none;
+    width: 13em;
+    margin: 1.75em 0 0 1em;
+    padding: 0.5em;
+    border-radius: 8px;
+    border: 1px solid var(--theme-st-bdc-warning);
+    color:            var(--theme-st-fgc-warning);
+    background-color: var(--theme-st-bgc-warning);
+}
+.settings-dialog .warning p:first-child {
+    margin-block-start: 0;
+}
+.settings-dialog .warning p:last-child {
+    margin-block-end: 0;
+}
+.settings-dialog .show-emacs-warning .emacs-warning {
+    display: block;
+}
+
+.settings-dialog .error-message {
+    display: none;
+    width: 13em;
+    margin: 1.75em 0 0 1em;
+    padding: 0.5em;
+    border-radius: 5pt;
+    border: 1px solid var(--theme-st-bdc-error);
+    color:            var(--theme-st-fgc-error);
+    background-color: var(--theme-st-bgc-error);
+}
+.settings-dialog .error-message.active {
+    display: block;
+}
+
+
+/* === codemirror === */
+
+.codemirror-hide-line-numbers .cm-lineNumbers {
+    display: none !important;  /* must use !important to override codemirror's !important setting */
+}
+
+
+/* === global error messages === */
+
+body > .error-message {
+    display: block;
+    margin: 1.75em;
+    padding: 0.5em;
+    border-radius: 5pt;
+    border: 1px solid var(--theme-by-bdc-error);
+    color:            var(--theme-by-fgc-error);
+    background-color: var(--theme-by-bgc-error);
+}
+
+
+/* === print media queries === */
+
+@media not print {
+    /* nothing for now */
+}
+
+@media print {
+
+    header {
+        display: none;
+    }
+
+    main {
+        overflow: visible;
+    }
+
+    .resize-handle,
+    .resize-handle::after {
+        display: none;
+    }
+
+}
