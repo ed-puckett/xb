@@ -1,14 +1,142 @@
+does an ActivityManager ever release activities once they are done?
+KeySpec.#is_on_macos needs to be fixed
+summarize licenses in a single file in dist
+make help document
+update README.md
+some code in xb-manager/commands.ts should be implemented as methods in XbManager
+when rendering xb-cell with data type set to custom renderer, get error "renderer._render is not a function" in OutputContext._invoke_renderer() -- examples/test.html, set data-type on an xb-cell
+improve appearance of notifications, AlertDialog, ConfirmDialog and SettingsDialog
+data-active on cell is (sometimes?) ignored when loading document (focus is set to first cell even when data-active="true" is set on last cell)
+assets_server_url(): in lib but highly dependent on src-dependent information like bootstrap script location
+xb.set_structure_modified and associated logic is kludgey and hard to maintain
+test set_editable() on and off and on again in the presence of modifications
+what about x- media-types?  E.g., "x-tex" instead of "tex" (see also: https://stackoverflow.com/questions/54548502/what-is-the-correct-mimetype-for-tex-files)
+mobile: menu element can scroll out of view (interaction with on-screen keyboard?)
+fix syntax coloring in CodeMirror
+menu.remove() is a little kludgey
+mobile: menus are not updated after reloaded
+settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
+need to listen for and respond to settings changes (from other instances, too)
+review the way global_eval_context is used/partitioned
+test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
+XbManager: root element (use instead of document, etc, for e.g., querySelector())
+allow multiple disjoint XbManager instances controlling different documents (e.g., for Help)
+think about: maintain (weak) list of XbManager instances, require non-overlapping root elements, be able to identify an XbManager given a child element; eliminate need for CellElement._set_xb()
+how does parent ActivityManager get notified if a child stops?  necessary?
+CellElement.outerHTML does not correctly translate attribute values that contain a " character (should maybe provide a function in dom-tools)
+determine if the component attribute observers would be useful in CellElement
+can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
+tsconfig: module, moduleResolution
+search for uses of XbManager.singleton (should be few; instead: access through OutputContext, XbCellElement, KeyEventManager or Menu)
+
+
+--- DONE ---
+* output elements can become orphaned (when deleting corresponding xb-cell?)  see examples/test.html
+* cannot fully stop auto-eval document (subsequent cells continue evaluating)
+* need auto-eval setting for document, especially for data-cell-view="presentation" case
+* implement recents?  or not?  (NO)
+* presentation view should limit interaction
+* presentation view: dialogs can be activated but do not show
+* inhibit notifications when printing
+* notifications are obscured by ellipsis menu (vs classic menu)
+* kiosk --> presentation
+* ExportOptionsDialog, AlertDialog and ConfirmDialog do not support dark mode yet
+* save_serializer: extra newlines are output at the end of the <body> element
+* save: xb-bootstrap.js src in bootstrap script tag: making absolute causes, e.g., when the absolute URL is local and then the page is saved to the server
+* beforeunload: make less strict
+* choose menu type in settings
+* copy/paste: readText() not available in Firefox in an unsecure context (available after interaction; good enough?)
+* should the loading origin be relative to the bootstrap script instead of the main document?  (see also: dom-tools: load_script() and load_script_and_wait_for_condition())
+* manage scroll position better
+* scroll/focus active cell for commands where it is appropriate
+* mobile: need long-press (right-click) menu
+* beforeunload warning not working (but works after interacting with menu...)
+* TeX formatting settings no longer work
+* discrepency between inline and block fonts (TeX) in varying resolutions (e.g., phone)
+* empty inputs should yield "empty" (0-area) outputs
+* provide feedback for "saved", etc
+* when menu has been used (and is still focused), issuing key command like focus-down also opens menu
+* menu spec ids should just use the corresponding command (eliminating those ids)
+* rework settings-dialog and dialog in general (need to segregate accept/decline controls)
+* fix save-as, etc; fs-interface needs a rewrite (did a little cleanup, no rewrite...)
+* display unhandled rejections and errors
+* save-as does not work in Chromium
+* async command handlers do not trigger error (beep) when they return false (indicating failure)
+* review XbManager.#update_menu_state(); also: put check marks on items appropriately
+* menus with multiple keyboard bindings that are in turn multi-key sequences display confusingly (see command set-mode-plain)
+* during document init, repsect 'data-active' on loaded cells
+* validate data-cell-view during init
+* preserve data-cell-view in save_serializer()
+* animate data-cell-view transitions
+* can't click to select a collapsed (via hide) cell
+* make cells collapsed from data-cell-view="hide" look better
+* data-source-element is not set for all outputs [not fixing; the top-level output does have this set--by XbManager.singleton.invoke_renderer()]
+* data-type on output elements (vs data-source-media-type, etc) -- rationalize creation of output elements and sub-elements
+* rationalize data-type and data-media-type
+* OutputContextLike.abort_if_stopped(): these exceptions are uncaught, should catch them and output an appropriate message
+* fix dialog/settings-dialog #ui hack
+* markdown renderer: is there a way to keep a computation running (keepalive).  Yes....
+* fix console.{error,warn} usages
+* implement CellElement.stop()
+* rationalize running jobs: XbManager.#multi_eval_manager, ocx, renderer (isa ActivityManager), etc
+* menu sometimes opens with everything text-selected
+* fix keepalive for renderer/ocx
+* menu separators are not showing up
+* make ActivityManager extend Activity so that one ActivityManager can control another (Q: how does parent manager get notified if a child stops?)
+
+
+
+========================================================================================================================
+
+=== OBJECTS WITH OWN XB REFERENCE ===
+
+OutputContext (ocx)
+CellElement
+MenuBar (for CommandContext)(parameterized by type DocumentManager to avoid src/XbManager references in lib/)
+KeyEventManager (for CommandContext)(parameterized by type DocumentManager)
+
+Also: CommandContext (parameterized by type DocumentManager)
+Not:  Renderer
+
+
 === XB DESIGN NOTES ===
 
 editor
-evaluator (translator?)
+renderer
 ocx (output context)
 
 document_manager
-process_manager
+activity_manager
 command_manager
 
 settings
+
+---
+locus of activity management candidates:
+- XbManager.singleton
+- ocx
+- renderer
+- cell
+- output_element
+choose: XbManager.singleton and ocx
+
+---
+"cell" elements
+- id
+- css class: "cell"
+- dataset attributes:
+  -- type: media-type, e.g., "text/plain", "text/html", "text/javascipt", "text/typescript", "application/json", "text/x-tex", "text/x-latex", ...
+
+"output" elements
+- class: "output" (necessary?)
+- dataset attributes:
+  -- source-element: source element (cell) id
+  -- source-media-type
+
+see: https://www.iana.org/assignments/media-types/media-types.xhtml
+
+---
+alternative terms: renderer, translator, converter, interpreter, compiler, evaluator
 
 ---
 reactive?

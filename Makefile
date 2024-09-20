@@ -1,7 +1,3 @@
-.PHONY: all
-all: dist
-
-
 ######################################################################
 
 SHELL = /bin/bash
@@ -15,6 +11,9 @@ SERVER_PORT    = 4320
 
 ######################################################################
 
+.PHONY: all
+all: $(DIST_DIR)
+
 .DEFAULT: all
 
 .PHONY: clean
@@ -25,19 +24,22 @@ clean: kill-server
 full-clean: clean
 	@-rm -fr ./node_modules >/dev/null 2>&1 || true
 
-./package-lock.json ./node_modules: ./package.json
-	npm install
-	touch ./package-lock.json ./node_modules
-
 .PHONY: install
 install: ./node_modules $(DIST_DIR)
 
 .PHONY: lint
 lint: ./node_modules
-	./node_modules/.bin/eslint --config .eslintrc.cjs src lib
+#!!!	./node_modules/.bin/eslint --config .eslintrc.cjs src lib
 
-$(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./lib/*/* ./lib/*/*/* ./lib/*/*/* ./node_modules README.md
+$(DIST_DIR): ./src ./src/* ./src/*/* ./src/*/*/* ./src/*/*/*/* ./lib ./lib/* ./lib/*/* ./lib/*/*/* ./node_modules README.md
 	make lint && ./build-tools/build-dist.sh
+
+./package-lock.json ./node_modules: ./package.json
+	npm install
+	touch ./package-lock.json ./node_modules
+
+copy-files:
+	./build-tools/build-dist.sh copy-only
 
 .PHONY: test
 test:
@@ -57,7 +59,7 @@ kill-server:
 
 .PHONY: dev-server
 dev-server:
-	npx nodemon --watch src --watch lib --watch package.json --watch Makefile --watch .eslintrc.cjs --watch webpack.config.js --watch build-tools --watch node_modules  --ext js,cjs,mjs,html,css,ico,svg,py,sh  --exec "bash -c 'make server' || exit 1"
+	npx nodemon --watch src --watch lib --watch package.json --watch Makefile --watch .eslintrc.cjs --watch webpack.config.js --watch build-tools --watch node_modules  --ext ts,js,cjs,mjs,html,css,ico,svg,py,sh  --exec "bash -c 'make server' || exit 1"
 
 .PHONY: client
 client:
