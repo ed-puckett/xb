@@ -1,6 +1,5 @@
 does an ActivityManager ever release activities once they are done?
 KeySpec.#is_on_macos needs to be fixed
-summarize licenses in a single file in dist
 make help document
 update README.md
 some code in xb-manager/commands.ts should be implemented as methods in XbManager
@@ -31,6 +30,7 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* summarize licenses in a single file in dist
 * output elements can become orphaned (when deleting corresponding xb-cell?)  see examples/test.html
 * cannot fully stop auto-eval document (subsequent cells continue evaluating)
 * need auto-eval setting for document, especially for data-cell-view="presentation" case
