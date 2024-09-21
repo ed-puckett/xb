@@ -45,7 +45,7 @@ export class Activity {
      */
     protected _set_target(target: ObjectWithStopMethod) {
         if (this.target) {
-            throw new Error('Activity.__set_target called but this.target is already set');
+            throw new Error('Activity._set_target called but this.target is already set');
         } else {
             this.#target = target;
         }
@@ -60,12 +60,12 @@ export class Activity {
      */
     stop(): void {
         if (!this.stopped) {
+            this.#stop_count++;
             try {
                 this.target?.stop();
             } catch (error) {
                 console.error('error while stopping', this, error);
             } finally {
-                this.#stop_count++;
                 this.stop_states.dispatch({
                     activity: this,
                 });
@@ -76,7 +76,7 @@ export class Activity {
 
 
 /** ActivityManager can be used hierarchically, i.e., an ActivityManager can be
- * added to different ActivityManager as an Activity,
+ * added to a different ActivityManager as an Activity,
  */
 export class ActivityManager extends Activity {
     #activity_objects: Array<Activity>;  // managed Activity objects
@@ -96,6 +96,9 @@ export class ActivityManager extends Activity {
     add_activity(activity: Activity): void {
         if (!(activity instanceof Activity)) {
             throw new Error('activity must be an instance of Activity');
+        }
+        if (activity === this) {
+            throw new Error('cannot this.add_activity() to itself');
         }
         if (!this.#activity_objects.includes(activity)) {
             this.#activity_objects.push(activity);
