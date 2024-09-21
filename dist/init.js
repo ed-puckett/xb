@@ -7427,7 +7427,7 @@ class Activity {
      */
     _set_target(target) {
         if (this.target) {
-            throw new Error('Activity.__set_target called but this.target is already set');
+            throw new Error('Activity._set_target called but this.target is already set');
         }
         else {
             this.#target = target;
@@ -7442,6 +7442,7 @@ class Activity {
      */
     stop() {
         if (!this.stopped) {
+            this.#stop_count++;
             try {
                 this.target?.stop();
             }
@@ -7449,7 +7450,6 @@ class Activity {
                 console.error('error while stopping', this, error);
             }
             finally {
-                this.#stop_count++;
                 this.stop_states.dispatch({
                     activity: this,
                 });
@@ -7458,7 +7458,7 @@ class Activity {
     }
 }
 /** ActivityManager can be used hierarchically, i.e., an ActivityManager can be
- * added to different ActivityManager as an Activity,
+ * added to a different ActivityManager as an Activity,
  */
 class ActivityManager extends Activity {
     #activity_objects; // managed Activity objects
@@ -7476,6 +7476,9 @@ class ActivityManager extends Activity {
     add_activity(activity) {
         if (!(activity instanceof Activity)) {
             throw new Error('activity must be an instance of Activity');
+        }
+        if (activity === this) {
+            throw new Error('cannot this.add_activity() to itself');
         }
         if (!this.#activity_objects.includes(activity)) {
             this.#activity_objects.push(activity);
@@ -12379,15 +12382,14 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7007);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1024);
 /* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3161);
-/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9888);
-/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8067);
-/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5462);
-/* harmony import */ var src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4723);
-/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1576);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(3428);
-/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1688);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_eval_worker___WEBPACK_IMPORTED_MODULE_5__]);
-_eval_worker___WEBPACK_IMPORTED_MODULE_5__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8067);
+/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5462);
+/* harmony import */ var src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4723);
+/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1576);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3428);
+/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1688);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_eval_worker___WEBPACK_IMPORTED_MODULE_4__]);
+_eval_worker___WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 const current_script_url = "file:///home/ed/code/xb/src/renderer/text/javascript-renderer/_.ts"; // save for later
 
 const lib_dir_path = '../../../lib/';
@@ -12436,7 +12438,6 @@ const dynamic_import = new Function('path', 'return import(path);');
 // ======================================================================
 const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).constructor;
-
 
 
 
@@ -12526,7 +12527,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         return eval_ocx.element;
     }
     async #create_eval_environment(eval_context, ocx, source_code) {
-        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_6__/* .load_d3 */ .l)();
+        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__/* .load_d3 */ .l)();
         function is_stopped() {
             return ocx.stopped;
         }
@@ -12557,8 +12558,8 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             }
         }
         async function create_worker(options) {
-            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_5__/* .EvalWorker */ .V(options);
-            ocx.manage_activity(new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_4__/* .Activity */ .I(worker)); // multiple_stops = false
+            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_4__/* .EvalWorker */ .V(options); // is an Activity; multiple_stops = false
+            ocx.manage_activity(worker);
             return worker;
         }
         async function import_lib(lib_path) {
@@ -12581,9 +12582,9 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             TextBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .m9,
             ApplicationBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .ApplicationBasedRenderer */ .rK,
             d3, // for use with Plotly
-            load_Plotly: src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_7__/* .load_Plotly */ .O,
-            load_Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_8__/* .load_Algebrite */ .B,
-            rxjs: rxjs__WEBPACK_IMPORTED_MODULE_9__,
+            load_Plotly: src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_6__/* .load_Plotly */ .O,
+            load_Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__/* .load_Algebrite */ .B,
+            rxjs: rxjs__WEBPACK_IMPORTED_MODULE_8__,
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
@@ -12615,7 +12616,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             graphviz: ocx.graphviz.bind(ocx),
             plotly: ocx.plotly.bind(ocx),
             canvas_image: ocx.canvas_image.bind(ocx),
-            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_10__,
+            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__,
         };
         return eval_environment;
     }
@@ -12633,47 +12634,48 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   V: () => (/* binding */ EvalWorker)
 /* harmony export */ });
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3141);
-/* harmony import */ var lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7575);
-/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9432);
+/* harmony import */ var lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9888);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3141);
+/* harmony import */ var lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7575);
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9432);
 const current_script_url = "file:///home/ed/code/xb/src/renderer/text/javascript-renderer/eval-worker/_.ts"; // save for later
 
 
 
-class EvalWorker {
+
+class EvalWorker extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_0__/* .Activity */ .I {
     get CLASS() { return this.constructor; }
     #keepalive;
     #id;
     #worker;
-    #stopped;
     #current_expression;
     /** @param {null|undefined|Object} options: {
      *      keepalive?: boolean,  // (default false) keep running after eval() or stream_eval() completes
      *  }
      */
     constructor(options) {
+        super(undefined); // would like to pass this as target, but cannot, so:
+        this._set_target(this); // set the target now
         const { keepalive = false, } = (options ?? {});
         this.#keepalive = !!keepalive;
-        this.#id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__/* .generate_object_id */ .Q7)();
+        this.#id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_2__/* .generate_object_id */ .Q7)();
         this.#worker = new Worker(this.CLASS.#worker_code_uri);
-        this.#stopped = false;
         this.#current_expression = undefined;
     }
     get keepalive() { return this.#keepalive; }
     get id() { return this.#id; }
-    get stopped() { return this.#stopped; }
     stop() {
-        if (!this.#stopped) {
+        if (!this.stopped) { // this.stopped is from parent class Activity
             this.#reset_event_handlers();
             this.#current_expression?.stop();
             this.#current_expression = undefined;
             this.#worker?.terminate();
             this.#worker = undefined;
-            this.#stopped = true;
+            super.stop(); // this.stopped will be true because multiple_stops = false
         }
     }
     async eval(expression, eval_context) {
-        if (this.#stopped) {
+        if (this.stopped) {
             throw new Error(`eval worker ${this.id}: worker has been stopped`);
         }
         if (!this.#worker) {
@@ -12682,7 +12684,7 @@ class EvalWorker {
         if (this.#current_expression) {
             throw new Error(`eval worker ${this.id}: an expression evaluation is already in process`);
         }
-        const result_promise = new lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_2__/* .OpenPromise */ .q();
+        const result_promise = new lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_3__/* .OpenPromise */ .q();
         let result_promise_fulfilled = false;
         const handle_done = () => {
             this.#current_expression = undefined;
@@ -12694,7 +12696,7 @@ class EvalWorker {
                 this.stop();
             }
         };
-        const expression_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__/* .generate_object_id */ .Q7)();
+        const expression_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_2__/* .generate_object_id */ .Q7)();
         const worker_message = {
             request: 'eval',
             id: expression_id,
@@ -12781,7 +12783,7 @@ class EvalWorker {
                 }
             }
         };
-        const expression_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_1__/* .generate_object_id */ .Q7)();
+        const expression_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_2__/* .generate_object_id */ .Q7)();
         const worker_message = {
             request: 'stream_eval',
             id: expression_id,
@@ -12834,7 +12836,7 @@ class EvalWorker {
                             return Promise.resolve({ done: true });
                         }
                         else {
-                            const new_promise = new lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_2__/* .OpenPromise */ .q();
+                            const new_promise = new lib_sys_open_promise__WEBPACK_IMPORTED_MODULE_3__/* .OpenPromise */ .q();
                             pending_promises.push(new_promise);
                             return new_promise.promise;
                         }
@@ -12848,7 +12850,7 @@ class EvalWorker {
         };
     }
     #reset_event_handlers() {
-        if (!this.#stopped) {
+        if (!this.stopped) {
             if (this.#worker) {
                 this.#worker.onmessage = null;
                 this.#worker.onerror = null;
@@ -12862,7 +12864,7 @@ class EvalWorker {
         // create a data: URI for the web worker code so that we avoid cross-origin access errors
         // see: https://stackoverflow.com/questions/23953543/cross-domain-web-workers
         // and: https://github.com/CezaryDanielNowak/CrossOriginWorker/blob/main/index.js
-        const worker_url = new URL('../../../../../dist/web-worker.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_0__/* .assets_server_url */ .U)(current_script_url)); // ./web-worker.js is copied to dist/ dir by build process
+        const worker_url = new URL('../../../../../dist/web-worker.js', (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_1__/* .assets_server_url */ .U)(current_script_url)); // ./web-worker.js is copied to dist/ dir by build process
         return fetch(worker_url)
             .then(res => res.text())
             .catch(error => {

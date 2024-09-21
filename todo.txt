@@ -30,6 +30,7 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* EvalWorker does not notify when done, should probably extend Activity directly
 * summarize licenses in a single file in dist
 * output elements can become orphaned (when deleting corresponding xb-cell?)  see examples/test.html
 * cannot fully stop auto-eval document (subsequent cells continue evaluating)

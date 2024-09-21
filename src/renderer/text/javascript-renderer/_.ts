@@ -238,8 +238,8 @@ export class JavaScriptRenderer extends TextBasedRenderer {
         }
 
         async function create_worker(options?: object) {
-            const worker = new EvalWorker(options);
-            ocx.manage_activity(new Activity(worker));  // multiple_stops = false
+            const worker = new EvalWorker(options);  // is an Activity; multiple_stops = false
+            ocx.manage_activity(worker);
             return worker;
         }
 

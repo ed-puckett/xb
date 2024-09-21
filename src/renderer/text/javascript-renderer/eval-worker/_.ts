@@ -1,6 +1,10 @@
 const current_script_url = import.meta.url;  // save for later
 
 import {
+    Activity,
+} from 'lib/sys/activity-manager';
+
+import {
     generate_object_id,
 } from 'lib/sys/uuid';
 
@@ -19,13 +23,12 @@ type WorkerResult = {
     error?: Error,
 };
 
-export class EvalWorker {
+export class EvalWorker extends Activity {
     get CLASS () { return this.constructor as typeof EvalWorker; }
 
     readonly #keepalive: boolean;
     readonly #id:        string;
     #worker:             undefined|Worker;
-    #stopped:            boolean;
     #current_expression: any;
 
     /** @param {null|undefined|Object} options: {
@@ -33,6 +36,9 @@ export class EvalWorker {
      *  }
      */
     constructor(options?: object) {
+        super(undefined);        // would like to pass this as target, but cannot, so:
+        this._set_target(this);  // set the target now
+
         const {
             keepalive = false,
         } = (options ?? {}) as any;
@@ -40,27 +46,26 @@ export class EvalWorker {
         this.#keepalive          = !!keepalive;
         this.#id                 = generate_object_id();
         this.#worker             = new Worker(this.CLASS.#worker_code_uri);
-        this.#stopped            = false;
         this.#current_expression = undefined;
     }
 
     get keepalive (){ return this.#keepalive; }
     get id        (){ return this.#id; }
-    get stopped   (){ return this.#stopped; }
 
     stop(): void {
-        if (!this.#stopped) {
+        if (!this.stopped) {  // this.stopped is from parent class Activity
             this.#reset_event_handlers();
             this.#current_expression?.stop();
             this.#current_expression = undefined;
             this.#worker?.terminate();
             this.#worker = undefined;
-            this.#stopped = true;
+
+            super.stop();  // this.stopped will be true because multiple_stops = false
         }
     }
 
     async eval(expression: string, eval_context: object): Promise<any> {
-        if (this.#stopped) {
+        if (this.stopped) {
             throw new Error(`eval worker ${this.id}: worker has been stopped`);
         }
         if (!this.#worker) {
@@ -248,7 +253,7 @@ export class EvalWorker {
     }
 
     #reset_event_handlers() {
-        if (!this.#stopped) {
+        if (!this.stopped) {
             if (this.#worker) {
                 this.#worker.onmessage      = null;
                 this.#worker.onerror        = null;
