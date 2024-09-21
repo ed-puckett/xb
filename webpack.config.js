@@ -1,6 +1,7 @@
 const current_script_url = import.meta.url;  // grab right away for later
 
 import { fileURLToPath } from "node:url";
+import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 
 const src_dir_path  = fileURLToPath(new URL("./src",  current_script_url));
 const lib_dir_path  = fileURLToPath(new URL("./lib",  current_script_url));
@@ -46,6 +47,10 @@ const webpack_config = {
             },
         ],
     },
+
+    plugins: [
+        new LicenseWebpackPlugin(),
+    ],
 };
 
 export default webpack_config;
