@@ -7461,15 +7461,15 @@ class Activity {
  * added to a different ActivityManager as an Activity,
  */
 class ActivityManager extends Activity {
-    #activity_objects; // managed Activity objects
+    #children; // managed Activity objects
     #stopped; // true iff !this.multiple_stops and this.stop() has been called, false otherwise
     constructor(multiple_stops = false) {
         super(undefined, multiple_stops);
         super._set_target(this); // cannot call super(this), so do it this way
-        this.#activity_objects = [];
+        this.#children = [];
         this.#stopped = false;
     }
-    /** add an Activity to this.#activity_objects
+    /** add an Activity to this.#children
      *  @param {Activity} activity
      * If activity is already present, then do nothing.
      */
@@ -7480,11 +7480,11 @@ class ActivityManager extends Activity {
         if (activity === this) {
             throw new Error('cannot this.add_activity() to itself');
         }
-        if (!this.#activity_objects.includes(activity)) {
-            this.#activity_objects.push(activity);
+        if (!this.#children.includes(activity)) {
+            this.#children.push(activity);
         }
     }
-    /** remove an Activity object from this.#activity_objects
+    /** remove an Activity object from this.#children
      *  @param {Activity} activity
      *  @return {Boolean} found and removed?
      */
@@ -7492,12 +7492,12 @@ class ActivityManager extends Activity {
         if (!(activity instanceof Activity)) {
             throw new Error('activity must be an instance of Activity');
         }
-        const index = this.#activity_objects.indexOf(activity);
+        const index = this.#children.indexOf(activity);
         if (index === -1) {
             return false;
         }
         else {
-            this.#activity_objects.splice(index, 1);
+            this.#children.splice(index, 1);
             return true;
         }
     }
@@ -7525,17 +7525,53 @@ class ActivityManager extends Activity {
             this.remove_activity(activity);
         });
     }
-    /** Stop and remove any activity objects from this.#activity_objects,
+    /** Stop and remove any activity objects from this.#children,
      * then stop this manager object by calling super.stop().
      */
     stop() {
-        if (this.#activity_objects.length > 0) {
-            while (this.#activity_objects.length > 0) {
-                const activity = this.#activity_objects.pop();
+        if (this.#children.length > 0) {
+            while (this.#children.length > 0) {
+                const activity = this.#children.pop();
                 activity?.stop(); // note: typescript cannot tell here that activity is not undefined
             }
             super.stop();
         }
+    }
+    // === DIAGNOSTICS ===
+    /** @return {ActivityTree} tree rooted at this ActivityManager
+     * For each recursive level, if children is undefined, then that
+     * level is an Activity but not an ActivityManager.  Otherwise,
+     * if children is not undefined, then that level is an ActivityManager
+     * with children as its children.
+     */
+    tree() {
+        function walk(activity) {
+            return {
+                activity,
+                children: (activity instanceof ActivityManager)
+                    ? activity.#children.map(walk)
+                    : undefined,
+            };
+        }
+        return walk(this);
+    }
+    /** @return {Array} tree rooted at this ActivityManager represented
+     * as nested arrays.  Each leaf is a non-ActivityManager Activity,
+     * and each array, which represents an ActivityManager, has an additional
+     * property "m" that is the associated ActivityManager.
+     */
+    simple_tree() {
+        function walk(activity) {
+            if (!(activity instanceof ActivityManager)) {
+                return activity;
+            }
+            else {
+                const c = activity.#children.map(walk);
+                c.m = activity;
+                return c;
+            }
+        }
+        return walk(this);
     }
 }
 
