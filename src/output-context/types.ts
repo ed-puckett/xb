@@ -61,16 +61,16 @@ import {
 export class StoppedError extends Error {};
 
 
-export abstract /*async*/ class OutputContextLike extends ActivityManager {
+export abstract class OutputContextLike extends ActivityManager {
     get CLASS (){ return this.constructor as typeof OutputContextLike; }
 
     constructor() {
-        super();  // ActivityManager base class: multiple_stops = false
+        super();  // ActivityManager base class; multiple_stops = false
     }
 
-    abstract /*async*/ get xb      (): XbManager;
-    abstract /*async*/ get element (): Element;
-    abstract /*async*/ get parent  (): undefined|OutputContextLike;
+    abstract get xb      (): XbManager;
+    abstract get element (): Element;
+    abstract get parent  (): undefined|OutputContextLike;
 
     #keepalive: boolean = false;
     get keepalive (){ return this.#keepalive; }

@@ -15,63 +15,35 @@ export class Activity {
     #stop_states = new SerialDataSource<StopState>();
     get stop_states () { return this.#stop_states; }
 
-    #target:         undefined|ObjectWithStopMethod;
     #multiple_stops: boolean;
     #stop_count:     number;
 
-    get target         (){ return this.#target; }
     get multiple_stops (){ return this.#multiple_stops; }
     get stop_count     (){ return this.#stop_count; }
     get stopped        (){ return (!this.#multiple_stops && this.#stop_count > 0); }
 
 
-    /** create a new object representing an Activity,
-     *  i.e., a something that is running and can be stopped
-     *  @param {ObjectWithStopMethod} target the underlying object that may be stopped
-     *  @param {Boolean} multiple_stops whether or not target's stop method may be called multiple times
+    /** create a new object representing an Activity, i.e., something that
+     *  is running and can be stopped
+     *  @param {Boolean} multiple_stops whether or not stop method may be called multiple times
      */
-    constructor( target?:        ObjectWithStopMethod,
-                 multiple_stops: boolean = false ) {
-        this.#target         = target;
+    constructor(multiple_stops: boolean = false) {
         this.#multiple_stops = multiple_stops;
         this.#stop_count     = 0;
-    }
-
-    /** this method is for use only by ActivityManager.  ActivityManager is also
-     * an Activity, but the ActivityManager constructor cannot call super(this)
-     * -- 'super' must be called before accessing 'this' -- so the ActivityManager
-     * constructor calls this method after the super() call to set its own target
-     * (in its role as an Activity) after calling super().
-     */
-    protected _set_target(target: ObjectWithStopMethod) {
-        if (this.target) {
-            throw new Error('Activity._set_target called but this.target is already set');
-        } else {
-            this.#target = target;
-        }
     }
 
     /** stop this activity.
      * No action is performed if the activity has already been stopped.
      * (Note that an activity with multiple_stops = true will never become
-     * stopped.)  Otherwise, if not stopped, then this.target is (attempted
-     * to be) stopped, this.stop_count is incremented, and an event is
-     * dispatched through this.stopped_states.
+     * stopped.)  Otherwise, if not stopped, then this.stop_count is
+     * incremented, and an event is dispatched through this.stopped_states.
      */
     stop(): void {
         if (!this.stopped) {
             this.#stop_count++;
-            try {
-                if (this.target && this.target !== this) {  // prevent endless recursion in the case where this ActivityManager is its own target
-                    this.target.stop();
-                }
-            } catch (error) {
-                console.error('error while stopping', this, error);
-            } finally {
-                this.stop_states.dispatch({
-                    activity: this,
-                });
-            }
+            this.stop_states.dispatch({
+                activity: this,
+            });
         }
     }
 }
@@ -85,8 +57,7 @@ export class ActivityManager extends Activity {
     #stopped:  boolean;          // true iff !this.multiple_stops and this.stop() has been called, false otherwise
 
     constructor(multiple_stops: boolean = false) {
-        super(undefined, multiple_stops);
-        super._set_target(this);  // cannot call super(this), so do it this way
+        super(multiple_stops);
         this.#children = [];
         this.#stopped  = false;
     }

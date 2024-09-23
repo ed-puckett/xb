@@ -191,7 +191,7 @@ export class XbManager {
         }
     }
 
-    #activity_manager: ActivityManager = new ActivityManager(true);  // true --> multiple_stops
+    #activity_manager: ActivityManager = new ActivityManager(true);  // true: multiple_stops
     #eval_states = new SerialDataSource<{ cell: XbCellElement, eval_state: boolean }>();
     #command_bindings: { [command: string]: ((...args: any[]) => any) };
     #key_event_manager: KeyEventManager<XbManager>;

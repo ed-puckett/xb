@@ -7402,60 +7402,31 @@ module.exports = styleTagTransform;
 class Activity {
     #stop_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_0__/* .SerialDataSource */ .Y();
     get stop_states() { return this.#stop_states; }
-    #target;
     #multiple_stops;
     #stop_count;
-    get target() { return this.#target; }
     get multiple_stops() { return this.#multiple_stops; }
     get stop_count() { return this.#stop_count; }
     get stopped() { return (!this.#multiple_stops && this.#stop_count > 0); }
-    /** create a new object representing an Activity,
-     *  i.e., a something that is running and can be stopped
-     *  @param {ObjectWithStopMethod} target the underlying object that may be stopped
-     *  @param {Boolean} multiple_stops whether or not target's stop method may be called multiple times
+    /** create a new object representing an Activity, i.e., something that
+     *  is running and can be stopped
+     *  @param {Boolean} multiple_stops whether or not stop method may be called multiple times
      */
-    constructor(target, multiple_stops = false) {
-        this.#target = target;
+    constructor(multiple_stops = false) {
         this.#multiple_stops = multiple_stops;
         this.#stop_count = 0;
-    }
-    /** this method is for use only by ActivityManager.  ActivityManager is also
-     * an Activity, but the ActivityManager constructor cannot call super(this)
-     * -- 'super' must be called before accessing 'this' -- so the ActivityManager
-     * constructor calls this method after the super() call to set its own target
-     * (in its role as an Activity) after calling super().
-     */
-    _set_target(target) {
-        if (this.target) {
-            throw new Error('Activity._set_target called but this.target is already set');
-        }
-        else {
-            this.#target = target;
-        }
     }
     /** stop this activity.
      * No action is performed if the activity has already been stopped.
      * (Note that an activity with multiple_stops = true will never become
-     * stopped.)  Otherwise, if not stopped, then this.target is (attempted
-     * to be) stopped, this.stop_count is incremented, and an event is
-     * dispatched through this.stopped_states.
+     * stopped.)  Otherwise, if not stopped, then this.stop_count is
+     * incremented, and an event is dispatched through this.stopped_states.
      */
     stop() {
         if (!this.stopped) {
             this.#stop_count++;
-            try {
-                if (this.target && this.target !== this) { // prevent endless recursion in the case where this ActivityManager is its own target
-                    this.target.stop();
-                }
-            }
-            catch (error) {
-                console.error('error while stopping', this, error);
-            }
-            finally {
-                this.stop_states.dispatch({
-                    activity: this,
-                });
-            }
+            this.stop_states.dispatch({
+                activity: this,
+            });
         }
     }
 }
@@ -7466,8 +7437,7 @@ class ActivityManager extends Activity {
     #children; // managed Activity objects
     #stopped; // true iff !this.multiple_stops and this.stop() has been called, false otherwise
     constructor(multiple_stops = false) {
-        super(undefined, multiple_stops);
-        super._set_target(this); // cannot call super(this), so do it this way
+        super(multiple_stops);
         this.#children = [];
         this.#stopped = false;
     }
@@ -11541,7 +11511,7 @@ class StoppedError extends Error {
 class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_2__/* .ActivityManager */ .B {
     get CLASS() { return this.constructor; }
     constructor() {
-        super(); // ActivityManager base class: multiple_stops = false
+        super(); // ActivityManager base class; multiple_stops = false
     }
     #keepalive = false;
     get keepalive() { return this.#keepalive; }
@@ -12693,8 +12663,7 @@ class EvalWorker extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_0__/*
      *  }
      */
     constructor(options) {
-        super(undefined); // would like to pass this as target, but cannot, so:
-        this._set_target(this); // set the target now
+        super(); // Activity base class; multiple_stops = false
         const { keepalive = false, } = (options ?? {});
         this.#keepalive = !!keepalive;
         this.#id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_2__/* .generate_object_id */ .Q7)();
@@ -33442,7 +33411,7 @@ class XbManager {
             (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .show_initialization_failed */ .$W)(error);
         }
     }
-    #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_2__/* .ActivityManager */ .B(true); // true --> multiple_stops
+    #activity_manager = new lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_2__/* .ActivityManager */ .B(true); // true: multiple_stops
     #eval_states = new lib_sys_serial_data_source__WEBPACK_IMPORTED_MODULE_16__/* .SerialDataSource */ .Y();
     #command_bindings;
     #key_event_manager;
