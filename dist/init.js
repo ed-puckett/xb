@@ -11546,10 +11546,12 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
     #keepalive = false;
     get keepalive() { return this.#keepalive; }
     set keepalive(new_state) {
+        new_state = !!new_state;
         // set for this ocx and all ancestors
         this.#keepalive = new_state;
-        if (this.parent) {
-            this.parent.keepalive = new_state; // recusively sets for all ancestors
+        if (this.parent && new_state) {
+            // if setting to true, recusively set for all ancestors
+            this.parent.keepalive = new_state;
         }
     }
     // === STATIC UTILITY ===
