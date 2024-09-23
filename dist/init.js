@@ -7423,7 +7423,7 @@ class Activity {
      * an Activity, but the ActivityManager constructor cannot call super(this)
      * -- 'super' must be called before accessing 'this' -- so the ActivityManager
      * constructor calls this method after the super() call to set its own target
-     * (in its role as an Activty) after calling super().
+     * (in its role as an Activity) after calling super().
      */
     _set_target(target) {
         if (this.target) {
@@ -7444,7 +7444,9 @@ class Activity {
         if (!this.stopped) {
             this.#stop_count++;
             try {
-                this.target?.stop();
+                if (this.target && this.target !== this) { // prevent endless recursion in the case where this ActivityManager is its own target
+                    this.target.stop();
+                }
             }
             catch (error) {
                 console.error('error while stopping', this, error);
@@ -7529,13 +7531,11 @@ class ActivityManager extends Activity {
      * then stop this manager object by calling super.stop().
      */
     stop() {
-        if (this.#children.length > 0) {
-            while (this.#children.length > 0) {
-                const activity = this.#children.pop();
-                activity?.stop(); // note: typescript cannot tell here that activity is not undefined
-            }
-            super.stop();
+        while (this.#children.length > 0) {
+            const activity = this.#children.pop();
+            activity?.stop(); // note: typescript cannot tell here that activity is not undefined
         }
+        super.stop();
     }
     // === DIAGNOSTICS ===
     /** @return {ActivityTree} tree rooted at this ActivityManager
@@ -12532,14 +12532,15 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
         // note that using for await ... of misses the return value and we
-        // want to process that, too.  Therefore, instead of the following,
-        // we consume the stream "manually".
+        // want to process that, too.  Therefore, instead of the following:
         //
         // for await (const result of result_stream) {
         //     if (typeof result !== 'undefined') {
         //         await eval_environment.render_value(result);
         //     }
         // }
+        //
+        // we consume the stream "manually":
         eval_loop: while (!eval_ocx.stopped) {
             let value, done;
             try {

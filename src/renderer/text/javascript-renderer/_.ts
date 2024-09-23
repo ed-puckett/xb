@@ -167,14 +167,15 @@ export class JavaScriptRenderer extends TextBasedRenderer {
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
 
         // note that using for await ... of misses the return value and we
-        // want to process that, too.  Therefore, instead of the following,
-        // we consume the stream "manually".
+        // want to process that, too.  Therefore, instead of the following:
         //
         // for await (const result of result_stream) {
         //     if (typeof result !== 'undefined') {
         //         await eval_environment.render_value(result);
         //     }
         // }
+        //
+        // we consume the stream "manually":
 
         eval_loop:
         while (!eval_ocx.stopped) {
