@@ -41,7 +41,7 @@ export class Activity {
      * an Activity, but the ActivityManager constructor cannot call super(this)
      * -- 'super' must be called before accessing 'this' -- so the ActivityManager
      * constructor calls this method after the super() call to set its own target
-     * (in its role as an Activty) after calling super().
+     * (in its role as an Activity) after calling super().
      */
     protected _set_target(target: ObjectWithStopMethod) {
         if (this.target) {
@@ -62,7 +62,9 @@ export class Activity {
         if (!this.stopped) {
             this.#stop_count++;
             try {
-                this.target?.stop();
+                if (this.target && this.target !== this) {  // prevent endless recursion in the case where this ActivityManager is its own target
+                    this.target.stop();
+                }
             } catch (error) {
                 console.error('error while stopping', this, error);
             } finally {
@@ -151,13 +153,11 @@ export class ActivityManager extends Activity {
      * then stop this manager object by calling super.stop().
      */
     stop(): void {
-        if (this.#children.length > 0) {
-            while (this.#children.length > 0) {
-                const activity: undefined|Activity = this.#children.pop();
-                activity?.stop();  // note: typescript cannot tell here that activity is not undefined
-            }
-            super.stop();
+        while (this.#children.length > 0) {
+            const activity: undefined|Activity = this.#children.pop();
+            activity?.stop();  // note: typescript cannot tell here that activity is not undefined
         }
+        super.stop();
     }
 
 

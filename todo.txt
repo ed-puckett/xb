@@ -1,3 +1,4 @@
+copy licenses from packages copied from their dist
 does an ActivityManager ever release activities once they are done?
 KeySpec.#is_on_macos needs to be fixed
 make help document
