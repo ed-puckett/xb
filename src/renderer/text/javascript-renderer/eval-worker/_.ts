@@ -36,8 +36,7 @@ export class EvalWorker extends Activity {
      *  }
      */
     constructor(options?: object) {
-        super(undefined);        // would like to pass this as target, but cannot, so:
-        this._set_target(this);  // set the target now
+        super();  // Activity base class; multiple_stops = false
 
         const {
             keepalive = false,
