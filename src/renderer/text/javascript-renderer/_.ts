@@ -238,10 +238,14 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             }
         }
 
-        function end_bg() {
+        function end_bg(aggressive: boolean = false) {
             let ancestor_ocx = ocx;
-            while (ancestor_ocx.parent) {
-                ancestor_ocx = ancestor_ocx.parent;
+            for (let parent; (parent = ancestor_ocx.parent); ancestor_ocx = parent) {
+                if ( !aggressive &&
+                     parent.children.some(activity => !activity.stopped && activity !== ancestor_ocx) ) {
+                    // parent has unstopped children that are not ancestor_ocx
+                    break;
+                }
             }
             ancestor_ocx.stop();
         }

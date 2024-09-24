@@ -7508,6 +7508,7 @@ class ActivityManager extends Activity {
         super.stop();
     }
     // === DIAGNOSTICS ===
+    get children() { return [...this.#children]; } // copy to avoid possibility of modification
     /** @return {ActivityTree} tree rooted at this ActivityManager
      * For each recursive level, if children is undefined, then that
      * level is an Activity but not an ActivityManager.  Otherwise,
@@ -12566,10 +12567,14 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
                 error_handler(error);
             }
         }
-        function end_bg() {
+        function end_bg(aggressive = false) {
             let ancestor_ocx = ocx;
-            while (ancestor_ocx.parent) {
-                ancestor_ocx = ancestor_ocx.parent;
+            for (let parent; (parent = ancestor_ocx.parent); ancestor_ocx = parent) {
+                if (!aggressive &&
+                    parent.children.some(activity => !activity.stopped && activity !== ancestor_ocx)) {
+                    // parent has unstopped children that are not ancestor_ocx
+                    break;
+                }
             }
             ancestor_ocx.stop();
         }

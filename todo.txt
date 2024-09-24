@@ -1,5 +1,6 @@
+javascript renderer: code_to_run uses bg() but not end_bg()
+add export option to eliminate data-active setting on <xb-cell> elements, thereby using the first cell (default) as the active cell when loading
 copy licenses from packages copied from their dist
-does an ActivityManager ever release activities once they are done?
 KeySpec.#is_on_macos needs to be fixed
 make help document
 update README.md
@@ -31,6 +32,8 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* does an ActivityManager ever release activities once they are done?
+* multiple bg()/end_bg()-using code sections in a markdown document will interfere when end_bg() is called in one (will also stop the other)
 * EvalWorker does not notify when done, should probably extend Activity directly
 * summarize licenses in a single file in dist
 * output elements can become orphaned (when deleting corresponding xb-cell?)  see examples/test.html

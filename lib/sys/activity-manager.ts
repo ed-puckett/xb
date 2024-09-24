@@ -134,6 +134,8 @@ export class ActivityManager extends Activity {
 
     // === DIAGNOSTICS ===
 
+    get children (){ return [ ...this.#children ]; }  // copy to avoid possibility of modification
+
     /** @return {ActivityTree} tree rooted at this ActivityManager
      * For each recursive level, if children is undefined, then that
      * level is an Activity but not an ActivityManager.  Otherwise,
