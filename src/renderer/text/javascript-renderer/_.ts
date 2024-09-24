@@ -238,6 +238,14 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             }
         }
 
+        function end_bg() {
+            let ancestor_ocx = ocx;
+            while (ancestor_ocx.parent) {
+                ancestor_ocx = ancestor_ocx.parent;
+            }
+            ancestor_ocx.stop();
+        }
+
         async function create_worker(options?: object) {
             const worker = new EvalWorker(options);  // is an Activity; multiple_stops = false
             ocx.manage_activity(worker);
@@ -276,6 +284,8 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             is_stopped,      // no abort_if_stopped()....
             keepalive:       ocx.AIS(keepalive),
             bg,              // don't wrap with AIS because that will cause an unhandled rejection if stopped
+            end_bg,          // don't wrap with AIS because that will cause an error
+
             create_worker:   ocx.AIS(create_worker),
             import_lib:      ocx.AIS(import_lib),
             import_src:      ocx.AIS(import_src),

@@ -12566,6 +12566,13 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
                 error_handler(error);
             }
         }
+        function end_bg() {
+            let ancestor_ocx = ocx;
+            while (ancestor_ocx.parent) {
+                ancestor_ocx = ancestor_ocx.parent;
+            }
+            ancestor_ocx.stop();
+        }
         async function create_worker(options) {
             const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_4__/* .EvalWorker */ .V(options); // is an Activity; multiple_stops = false
             ocx.manage_activity(worker);
@@ -12598,6 +12605,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
             bg, // don't wrap with AIS because that will cause an unhandled rejection if stopped
+            end_bg, // don't wrap with AIS because that will cause an error
             create_worker: ocx.AIS(create_worker),
             import_lib: ocx.AIS(import_lib),
             import_src: ocx.AIS(import_src),
