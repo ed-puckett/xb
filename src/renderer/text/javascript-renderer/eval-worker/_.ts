@@ -58,7 +58,7 @@ export class EvalWorker extends Activity {
         this.#worker?.terminate();
         this.#worker = undefined;
 
-        super.stop();  // this.stopped will be true because multiple_stops = false
+        super.stop();
     }
 
     async eval(expression: string, eval_context: object): Promise<any> {
