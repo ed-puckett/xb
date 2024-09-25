@@ -355,7 +355,7 @@ export async function command_handler__delete(command_context: CommandContext<Xb
     }
 }
 
-function set_mode_helper(command_context: CommandContext<XbManager>, type: string) {
+function set_type_helper(command_context: CommandContext<XbManager>, type: string) {
     if (!command_context.dm.interactive) {
         return false;
     }
@@ -373,29 +373,29 @@ function set_mode_helper(command_context: CommandContext<XbManager>, type: strin
 /** set the active cell's type to "markdown".
  *  @return {Boolean} true iff command successfully handled
  */
-export function command_handler__set_mode_markdown(command_context: CommandContext<XbManager>): boolean {
-    return set_mode_helper(command_context, 'markdown');
+export function command_handler__set_type_markdown(command_context: CommandContext<XbManager>): boolean {
+    return set_type_helper(command_context, 'markdown');
 }
 
 /** set the active cell's type to "tex".
  *  @return {Boolean} true iff command successfully handled
  */
-export function command_handler__set_mode_tex(command_context: CommandContext<XbManager>): boolean {
-    return set_mode_helper(command_context, 'tex');
+export function command_handler__set_type_tex(command_context: CommandContext<XbManager>): boolean {
+    return set_type_helper(command_context, 'tex');
 }
 
 /** set the active cell's type to "javascript".
  *  @return {Boolean} true iff command successfully handled
  */
-export function command_handler__set_mode_javascript(command_context: CommandContext<XbManager>): boolean {
-    return set_mode_helper(command_context, 'javascript');
+export function command_handler__set_type_javascript(command_context: CommandContext<XbManager>): boolean {
+    return set_type_helper(command_context, 'javascript');
 }
 
 /** set the active cell's type to "plain".
  *  @return {Boolean} true iff command successfully handled
  */
-export function command_handler__set_mode_plain(command_context: CommandContext<XbManager>): boolean {
-    return set_mode_helper(command_context, 'plain');
+export function command_handler__set_type_plain(command_context: CommandContext<XbManager>): boolean {
+    return set_type_helper(command_context, 'plain');
 }
 
 function set_view_helper(command_context: CommandContext<XbManager>, view: string): boolean {

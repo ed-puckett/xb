@@ -226,9 +226,9 @@ export class XbManager {
         return el;
     }
 
-    get cell_view_mode (){ return document.documentElement.getAttribute('data-cell-view') ?? cell_view_values_default; }
+    get cell_view (){ return document.documentElement.getAttribute('data-cell-view') ?? cell_view_values_default; }
 
-    get interactive (){ return (this.cell_view_mode !== 'presentation'); }
+    get interactive (){ return (this.cell_view !== 'presentation'); }
 
     get cell_parent (){ return this.main_element; }
 
@@ -752,8 +752,8 @@ export class XbManager {
             const active_cell     = this.active_cell;
             const active_index    = active_cell ? cells.indexOf(active_cell) : -1;
             const editable        = this.editable;
-            const cell_mode       = active_cell?.type;
-            const cell_view_mode  = this.cell_view_mode;
+            const cell_type       = active_cell?.type;
+            const cell_view       = this.cell_view;
             const has_save_handle = !!this.#file_handle;
             const is_neutral      = this.is_neutral();
 
@@ -787,16 +787,16 @@ export class XbManager {
             menu.set_menu_state('add-after',             { enabled: interactive && editable && !!active_cell });
             menu.set_menu_state('delete',                { enabled: interactive && editable && !!active_cell });
 
-            menu.set_menu_state('set-mode-plain',        { checked: (cell_mode === 'plain'),      enabled: interactive });
-            menu.set_menu_state('set-mode-markdown',     { checked: (cell_mode === 'markdown'),   enabled: interactive });
-            menu.set_menu_state('set-mode-tex',          { checked: (cell_mode === 'tex'),        enabled: interactive });
-            menu.set_menu_state('set-mode-javascript',   { checked: (cell_mode === 'javascript'), enabled: interactive });
+            menu.set_menu_state('set-type-plain',        { checked: (cell_type === 'plain'),      enabled: interactive });
+            menu.set_menu_state('set-type-markdown',     { checked: (cell_type === 'markdown'),   enabled: interactive });
+            menu.set_menu_state('set-type-tex',          { checked: (cell_type === 'tex'),        enabled: interactive });
+            menu.set_menu_state('set-type-javascript',   { checked: (cell_type === 'javascript'), enabled: interactive });
 
-            menu.set_menu_state('set-view-normal',       { checked: (cell_view_mode === 'normal') });
-            menu.set_menu_state('set-view-hide',         { checked: (cell_view_mode === 'hide') });
-            menu.set_menu_state('set-view-full',         { checked: (cell_view_mode === 'full') });
-            menu.set_menu_state('set-view-none',         { checked: (cell_view_mode === 'none') });
-            menu.set_menu_state('set-view-presentation', { checked: (cell_view_mode === 'presentation') });
+            menu.set_menu_state('set-view-normal',       { checked: (cell_view === 'normal') });
+            menu.set_menu_state('set-view-hide',         { checked: (cell_view === 'hide') });
+            menu.set_menu_state('set-view-full',         { checked: (cell_view === 'full') });
+            menu.set_menu_state('set-view-none',         { checked: (cell_view === 'none') });
+            menu.set_menu_state('set-view-presentation', { checked: (cell_view === 'presentation') });
 
             // no update to command 'help'
         }

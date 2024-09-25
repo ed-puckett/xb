@@ -147,7 +147,7 @@ xb-cell[data-type="javascript"] {
  * - normal:       all cells scroll (default)
  * - full:         all cells shown completely
  * - presentation: like none, but also the header element is hidden and no document close warning is issued
- *   -- in presentation mode, cells with css class "show-in-presentation" will be shown as in "normal" mode
+ *   -- in presentation view, cells with css class "show-in-presentation" will be shown as in "normal" view
  */
 
 html[data-cell-view="none"] xb-cell {

@@ -39,11 +39,11 @@ export function get_menubar_spec() {
             { label: 'Delete',          item: { command: 'delete'                } },
         ] },
 
-        { label: 'Mode', collection: [
-            { label: 'Plain text',      item: { command: 'set-mode-plain'        } },
-            { label: 'Markdown',        item: { command: 'set-mode-markdown'     } },
-            { label: 'TeX',             item: { command: 'set-mode-tex'          } },
-            { label: 'JavaScript',      item: { command: 'set-mode-javascript'   } },
+        { label: 'Type', collection: [
+            { label: 'Plain text',      item: { command: 'set-type-plain'        } },
+            { label: 'Markdown',        item: { command: 'set-type-markdown'     } },
+            { label: 'TeX',             item: { command: 'set-type-tex'          } },
+            { label: 'JavaScript',      item: { command: 'set-type-javascript'   } },
         ] },
 
         { label: 'View', collection: [
@@ -96,11 +96,11 @@ export function get_ellipsis_menu_spec() {
             { label: 'Delete',          item: { command: 'delete'                } },
         ] },
 
-        { label: 'Mode', collection: [
-            { label: 'Plain text',      item: { command: 'set-mode-plain'        } },
-            { label: 'Markdown',        item: { command: 'set-mode-markdown'     } },
-            { label: 'TeX',             item: { command: 'set-mode-tex'          } },
-            { label: 'JavaScript',      item: { command: 'set-mode-javascript'   } },
+        { label: 'Type', collection: [
+            { label: 'Plain text',      item: { command: 'set-type-plain'        } },
+            { label: 'Markdown',        item: { command: 'set-type-markdown'     } },
+            { label: 'TeX',             item: { command: 'set-type-tex'          } },
+            { label: 'JavaScript',      item: { command: 'set-type-javascript'   } },
         ] },
 
         { label: 'View', collection: [
@@ -156,10 +156,10 @@ export function get_global_initial_key_map_bindings() {
         'add-after':             [ 'CmdOrCtrl-Alt-Shift-Down' ],
         'delete':                [ 'CmdOrCtrl-Alt-Backspace' ],
 
-        'set-mode-plain':        [ 'Alt-M t', 'Alt-M p' ],
-        'set-mode-markdown':     [ 'Alt-M m' ],
-        'set-mode-tex':          [ 'Alt-M x' ],
-        'set-mode-javascript':   [ 'Alt-M j' ],
+        'set-type-plain':        [ 'Alt-T t', 'Alt-T p' ],
+        'set-type-markdown':     [ 'Alt-T m' ],
+        'set-type-tex':          [ 'Alt-T x' ],
+        'set-type-javascript':   [ 'Alt-T j' ],
 
         'set-view-normal':       [ 'Alt-V n' ],
         'set-view-hide':         [ 'Alt-V h' ],
@@ -210,10 +210,10 @@ export function get_global_command_bindings() {
         'add-after':             commands.command_handler__add_after,
         'delete':                commands.command_handler__delete,
 
-        'set-mode-plain':        commands.command_handler__set_mode_plain,
-        'set-mode-markdown':     commands.command_handler__set_mode_markdown,
-        'set-mode-tex':          commands.command_handler__set_mode_tex,
-        'set-mode-javascript':   commands.command_handler__set_mode_javascript,
+        'set-type-plain':        commands.command_handler__set_type_plain,
+        'set-type-markdown':     commands.command_handler__set_type_markdown,
+        'set-type-tex':          commands.command_handler__set_type_tex,
+        'set-type-javascript':   commands.command_handler__set_type_javascript,
 
         'set-view-normal':       commands.command_handler__set_view_normal,
         'set-view-hide':         commands.command_handler__set_view_hide,
