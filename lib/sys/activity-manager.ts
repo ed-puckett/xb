@@ -4,7 +4,8 @@ import {
 
 
 export type StopState = {
-    activity: Activity,
+    activity:    Activity,
+    was_stopped: boolean,
 }
 
 export type ObjectWithStopMethod = {
@@ -36,9 +37,11 @@ export class Activity {
      * this.stop_count is incremented, and an event is dispatched through this.stop_states.
      */
     stop(): void {
+        const was_stopped = this.stopped;
         this.#stop_count++;
         this.stop_states.dispatch({
             activity: this,
+            was_stopped,
         });
     }
 }

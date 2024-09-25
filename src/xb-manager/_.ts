@@ -607,14 +607,14 @@ export class XbManager {
             this.stop();  // stop any previously-running renderers
             this.reset_global_state();
 
-            let was_stopped = false;
+            let stopped = false;
             const stop_states_subscription = this.activity_manager.stop_states.subscribe((state: StopState) => {
-                was_stopped = true;
+                stopped = true;
             })
             try {
 
                 for (const iter_cell of cells) {
-                    if (was_stopped) {
+                    if (stopped) {
                         this.notification_manager.add('stopped');
                         break;
                     }

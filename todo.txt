@@ -1,5 +1,5 @@
-javascript renderer: code_to_run uses bg() but not end_bg()
-add export option to eliminate data-active setting on <xb-cell> elements, thereby using the first cell (default) as the active cell when loading
+javascript renderer eval environment: does bg() need a catch handler?
+add export option to eliminate data-active setting on <xb-cell> elements when saving, thereby using the first cell (default) as the active cell when loading the saved document
 copy licenses from packages copied from their dist
 KeySpec.#is_on_macos needs to be fixed
 make help document
@@ -32,6 +32,7 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* javascript renderer: code_to_run uses bg() but not end_bg()
 * does an ActivityManager ever release activities once they are done?
 * multiple bg()/end_bg()-using code sections in a markdown document will interfere when end_bg() is called in one (will also stop the other)
 * EvalWorker does not notify when done, should probably extend Activity directly

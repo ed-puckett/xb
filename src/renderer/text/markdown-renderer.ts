@@ -20,6 +20,10 @@ import {
 } from 'src/renderer/text/tex-renderer';
 
 import {
+    JavaScriptRenderer,
+} from 'src/renderer/text/javascript-renderer/_';
+
+import {
     OutputContextLike,
 } from 'src/output-context/types';
 
@@ -36,19 +40,36 @@ import {
 // https://github.com/UziTech/marked-katex-extension/blob/main/src/index.js
 // See also: https://marked.js.org/using_pro#async
 
+
+// ``` blocks are extended as follows:
+// - the opening ``` may be optionally followed by:
+//   -- renderer source type (e.g., "javascript", the default)
+//   -- then either $ or ! or both in either order:
+//      --- $ indicates that the "source" should be output
+//      --- ! indicates that the source should be rendered (executed) and output
+// - the source type, $ and ! can be separated by any amount of whitespace, or none
+
 const extension_name__inline_tex = 'inline-tex';
 const extension_name__block_tex  = 'block-tex';
 const extension_name__eval_code  = 'eval-code';
+
+const inline_tex_match_re = /^\$+([^$]+?)\$+/;
+
+const block_tex_match_re = /^\$\$([^$]+?)\$\$/;
+
+const eval_code_start_re = /^[`]{3}[\s]*[^!$\s\n]*[\s!$]*[\n]/;
+const eval_code_match_re = /^[`]{3}[\s]*(?<source_type>[^!$\s\n]*)[\s]*((?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_exec_show>[!][\s]*[$]))[\s]*[\n](?<code>.*?)[`]{3}/s;
+const eval_code_source_type_default = JavaScriptRenderer.type;
+
 
 type walkTokens_token_type = {
     type?:         string,
     raw?:          string,
     text?:         string,
     markup?:       string,
-    global_state?: object,
-    show?:         boolean,
-    background?:   boolean,
     source_type?:  string,
+    show?:         boolean,
+    global_state?: object,  // used only by extension_name__inline_tex and extension_name__block_tex
 };
 
 export class MarkdownRenderer extends TextBasedRenderer {
@@ -104,10 +125,9 @@ export class MarkdownRenderer extends TextBasedRenderer {
                         try {
 
                             const {
+                                text = '',
                                 source_type,
-                                text        = '',
-                                show        = false,
-                                background  = false,
+                                show = false,
                             } = token;
                             if (!source_type) {
                                 throw new Error('no source_type given');
@@ -117,7 +137,7 @@ export class MarkdownRenderer extends TextBasedRenderer {
                                 throw new Error(`cannot find renderer for source type "${source_type}"`);
                             }
                             const markup_segments: string[] = [];
-                            function add_segment(renderer_factory: RendererFactory, text_to_render: string, run_in_background: boolean) {
+                            function add_segment(renderer_factory: RendererFactory, text_to_render: string) {
                                 const output_element_id = generate_object_id();
                                 deferred_evaluations.push({
                                     output_element_id,
@@ -125,18 +145,17 @@ export class MarkdownRenderer extends TextBasedRenderer {
                                     renderer: new renderer_factory() as TextBasedRenderer,
                                     renderer_options: {
                                         global_state,
-                                        background: run_in_background,
                                     },
                                 });
                                 // this is the element we will render to from deferred_evaluations:
                                 markup_segments.push(`<div id="${output_element_id}"></div>`);
                             }
-                            if (token.show && text) {
+                            if (show && text) {
                                 // render the source text without executing
-                                add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n', false);
+                                add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n');
                             }
                             // render/execute the source text
-                            add_segment(renderer_factory, text, background);
+                            add_segment(renderer_factory, text);
                             token.markup = markup_segments.join('\n');
 
                         } catch (error: unknown) {
@@ -187,7 +206,7 @@ marked.use({
             level: 'inline',
             start(src: string) { return src.indexOf('$'); },
             tokenizer(src: string, tokens: unknown): undefined|walkTokens_token_type {
-                const match = src.match(/^\$+([^$]+?)\$+/);
+                const match = src.match(inline_tex_match_re);
                 if (!match) {
                     return undefined;
                 } else {
@@ -211,7 +230,7 @@ marked.use({
             level: 'block',
             start(src: string) { return src.indexOf('$$'); },
             tokenizer(src: string, tokens: unknown): undefined|walkTokens_token_type {
-                const match = src.match(/^\$\$([^$]+?)\$\$/);
+                const match = src.match(block_tex_match_re);
                 if (!match) {
                     return undefined;
                 } else {
@@ -234,21 +253,22 @@ marked.use({
         {
             name: extension_name__eval_code,
             level: 'block',
-            start(src: string) { return src.match(/^[`]{3}[^$!&\n]*([\s]*[$])?([!]|[&])[\s]*[\n]/)?.index; },
+            start(src: string) { return src.match(eval_code_start_re)?.index; },
             tokenizer(src: string, tokens: unknown): undefined|walkTokens_token_type {
-                const match_re = /^[`]{3}[\s]*(?<source_type>[^$!&\n]*)[\s]*((?<flags_b>[!])|(?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_bg>[&])|(?<flags_show_bg>[$][\s]*[&]))[\s]*[\n](?<code>.*?)[`]{3}/s;
-                const match = src.match(match_re);
+                const match = src.match(eval_code_match_re);
                 if (!match) {
                     return undefined;
                 } else {
-                    const source_type = (match.groups?.source_type?.trim() ?? '') || 'javascript';
+                    const source_type = (match.groups?.source_type?.trim() ?? '') || eval_code_source_type_default;
+                    const code = match.groups?.code ?? '';
+                    const show = !!(match.groups?.flags_show_exec || match.groups?.flags_exec_show);
+
                     return {
                         type: extension_name__eval_code,
+                        raw: match[0],
+                        text: code,
                         source_type,
-                        raw:  match[0],
-                        text: match.groups?.code ?? '',
-                        show:       !!match.groups?.flags_show_exec || !!match.groups?.flags_show_bg,
-                        background: !!match.groups?.flags_bg || !!match.groups?.flags_show_bg,
+                        show,
                         markup: undefined,  // filled in later by walkTokens
                     };
                 }

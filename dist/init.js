@@ -7419,9 +7419,11 @@ class Activity {
      * this.stop_count is incremented, and an event is dispatched through this.stop_states.
      */
     stop() {
+        const was_stopped = this.stopped;
         this.#stop_count++;
         this.stop_states.dispatch({
             activity: this,
+            was_stopped,
         });
     }
 }
@@ -12463,7 +12465,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
      * @throws {Error} if error occurs
      */
     async _render(ocx, code, options) {
-        const { style, inline, global_state = ocx.xb.global_state, background = false, } = (options ?? {});
+        const { style, inline, global_state = ocx.xb.global_state, } = (options ?? {});
         const eval_context = (global_state[this.type] ??= {});
         let eval_ocx = ocx;
         // if !style && inline, then use the given ocx,
@@ -12490,8 +12492,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         // evaluate the code:
         const eval_fn_this = eval_context;
         // add newline to code to prevent problems in case the last line is a // comment
-        // use bg() defined by #create_eval_environment() for background processing
-        const code_to_run = background ? `bg(async () => { ${code}\n });` : code + '\n';
+        const code_to_run = code + '\n';
         const eval_fn_body = `try { ${code_to_run} } catch (error) { await ocx.render_error(error, { abbreviated: true }); }`;
         const eval_fn = new AsyncGeneratorFunction(...eval_fn_params, eval_fn_body);
         const result_stream = eval_fn.apply(eval_fn_this, eval_fn_args);
@@ -12684,7 +12685,7 @@ class EvalWorker extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_0__/*
         this.#current_expression = undefined;
         this.#worker?.terminate();
         this.#worker = undefined;
-        super.stop(); // this.stopped will be true because multiple_stops = false
+        super.stop();
     }
     async eval(expression, eval_context) {
         if (this.stopped) {
@@ -31489,10 +31490,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7007);
 /* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3161);
 /* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6473);
-/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8150);
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3141);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _marked__WEBPACK_IMPORTED_MODULE_4__]);
-([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _marked__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3363);
+/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8150);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3141);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__]);
+([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -31502,9 +31505,21 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_
 // TeX handling adapted from: marked-katex-extension/index.js
 // https://github.com/UziTech/marked-katex-extension/blob/main/src/index.js
 // See also: https://marked.js.org/using_pro#async
+// ``` blocks are extended as follows:
+// - the opening ``` may be optionally followed by:
+//   -- renderer source type (e.g., "javascript", the default)
+//   -- then either $ or ! or both in either order:
+//      --- $ indicates that the "source" should be output
+//      --- ! indicates that the source should be rendered (executed) and output
+// - the source type, $ and ! can be separated by any amount of whitespace, or none
 const extension_name__inline_tex = 'inline-tex';
 const extension_name__block_tex = 'block-tex';
 const extension_name__eval_code = 'eval-code';
+const inline_tex_match_re = /^\$+([^$]+?)\$+/;
+const block_tex_match_re = /^\$\$([^$]+?)\$\$/;
+const eval_code_start_re = /^[`]{3}[\s]*[^!$\s\n]*[\s!$]*[\n]/;
+const eval_code_match_re = /^[`]{3}[\s]*(?<source_type>[^!$\s\n]*)[\s]*((?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_exec_show>[!][\s]*[$]))[\s]*[\n](?<code>.*?)[`]{3}/s;
+const eval_code_source_type_default = src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__/* .JavaScriptRenderer */ .Z.type;
 class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .m9 {
     static get type() { return 'markdown'; }
     static {
@@ -31540,7 +31555,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
                     case extension_name__eval_code: {
                         let renderer_factory = undefined;
                         try {
-                            const { source_type, text = '', show = false, background = false, } = token;
+                            const { text = '', source_type, show = false, } = token;
                             if (!source_type) {
                                 throw new Error('no source_type given');
                             }
@@ -31549,26 +31564,25 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
                                 throw new Error(`cannot find renderer for source type "${source_type}"`);
                             }
                             const markup_segments = [];
-                            function add_segment(renderer_factory, text_to_render, run_in_background) {
-                                const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .Q7)();
+                            function add_segment(renderer_factory, text_to_render) {
+                                const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__/* .generate_object_id */ .Q7)();
                                 deferred_evaluations.push({
                                     output_element_id,
                                     text: text_to_render,
                                     renderer: new renderer_factory(),
                                     renderer_options: {
                                         global_state,
-                                        background: run_in_background,
                                     },
                                 });
                                 // this is the element we will render to from deferred_evaluations:
                                 markup_segments.push(`<div id="${output_element_id}"></div>`);
                             }
-                            if (token.show && text) {
+                            if (show && text) {
                                 // render the source text without executing
-                                add_segment(MarkdownRenderer, '```' + source_type + '\n' + text + '\n```\n', false);
+                                add_segment(MarkdownRenderer, '```' + source_type + '\n' + text + '\n```\n');
                             }
                             // render/execute the source text
-                            add_segment(renderer_factory, text, background);
+                            add_segment(renderer_factory, text);
                             token.markup = markup_segments.join('\n');
                         }
                         catch (error) {
@@ -31581,7 +31595,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
                 }
             }
         };
-        const markup = _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .x.parse(markdown, marked_options); // using extensions, see below
+        const markup = _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .x.parse(markdown, marked_options); // using extensions, see below
         parent.innerHTML = markup;
         // now run the deferred_evaluations
         // by setting up the output elements for each of deferred_evaluations, we
@@ -31609,14 +31623,14 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
         return parent;
     }
 }
-_marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .x.use({
+_marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .x.use({
     extensions: [
         {
             name: extension_name__inline_tex,
             level: 'inline',
             start(src) { return src.indexOf('$'); },
             tokenizer(src, tokens) {
-                const match = src.match(/^\$+([^$]+?)\$+/);
+                const match = src.match(inline_tex_match_re);
                 if (!match) {
                     return undefined;
                 }
@@ -31641,7 +31655,7 @@ _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .x.use({
             level: 'block',
             start(src) { return src.indexOf('$$'); },
             tokenizer(src, tokens) {
-                const match = src.match(/^\$\$([^$]+?)\$\$/);
+                const match = src.match(block_tex_match_re);
                 if (!match) {
                     return undefined;
                 }
@@ -31665,22 +31679,22 @@ _marked__WEBPACK_IMPORTED_MODULE_4__/* .marked */ .x.use({
         {
             name: extension_name__eval_code,
             level: 'block',
-            start(src) { return src.match(/^[`]{3}[^$!&\n]*([\s]*[$])?([!]|[&])[\s]*[\n]/)?.index; },
+            start(src) { return src.match(eval_code_start_re)?.index; },
             tokenizer(src, tokens) {
-                const match_re = /^[`]{3}[\s]*(?<source_type>[^$!&\n]*)[\s]*((?<flags_b>[!])|(?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_bg>[&])|(?<flags_show_bg>[$][\s]*[&]))[\s]*[\n](?<code>.*?)[`]{3}/s;
-                const match = src.match(match_re);
+                const match = src.match(eval_code_match_re);
                 if (!match) {
                     return undefined;
                 }
                 else {
-                    const source_type = (match.groups?.source_type?.trim() ?? '') || 'javascript';
+                    const source_type = (match.groups?.source_type?.trim() ?? '') || eval_code_source_type_default;
+                    const code = match.groups?.code ?? '';
+                    const show = !!(match.groups?.flags_show_exec || match.groups?.flags_exec_show);
                     return {
                         type: extension_name__eval_code,
-                        source_type,
                         raw: match[0],
-                        text: match.groups?.code ?? '',
-                        show: !!match.groups?.flags_show_exec || !!match.groups?.flags_show_bg,
-                        background: !!match.groups?.flags_bg || !!match.groups?.flags_show_bg,
+                        text: code,
+                        source_type,
+                        show,
                         markup: undefined, // filled in later by walkTokens
                     };
                 }
@@ -33772,13 +33786,13 @@ class XbManager {
             this.set_structure_modified();
             this.stop(); // stop any previously-running renderers
             this.reset_global_state();
-            let was_stopped = false;
+            let stopped = false;
             const stop_states_subscription = this.activity_manager.stop_states.subscribe((state) => {
-                was_stopped = true;
+                stopped = true;
             });
             try {
                 for (const iter_cell of cells) {
-                    if (was_stopped) {
+                    if (stopped) {
                         this.notification_manager.add('stopped');
                         break;
                     }
