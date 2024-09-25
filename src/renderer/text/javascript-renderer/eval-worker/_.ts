@@ -52,15 +52,13 @@ export class EvalWorker extends Activity {
     get id        (){ return this.#id; }
 
     stop(): void {
-        if (!this.stopped) {  // this.stopped is from parent class Activity
-            this.#reset_event_handlers();
-            this.#current_expression?.stop();
-            this.#current_expression = undefined;
-            this.#worker?.terminate();
-            this.#worker = undefined;
+        this.#reset_event_handlers();
+        this.#current_expression?.stop();
+        this.#current_expression = undefined;
+        this.#worker?.terminate();
+        this.#worker = undefined;
 
-            super.stop();  // this.stopped will be true because multiple_stops = false
-        }
+        super.stop();  // this.stopped will be true because multiple_stops = false
     }
 
     async eval(expression: string, eval_context: object): Promise<any> {
@@ -252,12 +250,10 @@ export class EvalWorker extends Activity {
     }
 
     #reset_event_handlers() {
-        if (!this.stopped) {
-            if (this.#worker) {
-                this.#worker.onmessage      = null;
-                this.#worker.onerror        = null;
-                this.#worker.onmessageerror = null;
-            }
+        if (this.#worker) {
+            this.#worker.onmessage      = null;
+            this.#worker.onerror        = null;
+            this.#worker.onmessageerror = null;
         }
     }
 

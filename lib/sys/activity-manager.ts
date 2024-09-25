@@ -33,18 +33,13 @@ export class Activity {
     }
 
     /** stop this activity.
-     * No action is performed if the activity has already been stopped.
-     * (Note that an activity with multiple_stops = true will never become
-     * stopped.)  Otherwise, if not stopped, then this.stop_count is
-     * incremented, and an event is dispatched through this.stopped_states.
+     * this.stop_count is incremented, and an event is dispatched through this.stop_states.
      */
     stop(): void {
-        if (!this.stopped) {
-            this.#stop_count++;
-            this.stop_states.dispatch({
-                activity: this,
-            });
-        }
+        this.#stop_count++;
+        this.stop_states.dispatch({
+            activity: this,
+        });
     }
 }
 
@@ -54,12 +49,10 @@ export class Activity {
  */
 export class ActivityManager extends Activity {
     #children: Array<Activity>;  // managed Activity objects
-    #stopped:  boolean;          // true iff !this.multiple_stops and this.stop() has been called, false otherwise
 
     constructor(multiple_stops: boolean = false) {
         super(multiple_stops);
         this.#children = [];
-        this.#stopped  = false;
     }
 
     /** add an Activity to this.#children

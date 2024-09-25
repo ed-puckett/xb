@@ -7416,18 +7416,13 @@ class Activity {
         this.#stop_count = 0;
     }
     /** stop this activity.
-     * No action is performed if the activity has already been stopped.
-     * (Note that an activity with multiple_stops = true will never become
-     * stopped.)  Otherwise, if not stopped, then this.stop_count is
-     * incremented, and an event is dispatched through this.stopped_states.
+     * this.stop_count is incremented, and an event is dispatched through this.stop_states.
      */
     stop() {
-        if (!this.stopped) {
-            this.#stop_count++;
-            this.stop_states.dispatch({
-                activity: this,
-            });
-        }
+        this.#stop_count++;
+        this.stop_states.dispatch({
+            activity: this,
+        });
     }
 }
 /** ActivityManager can be used hierarchically, i.e., an ActivityManager can be
@@ -7435,11 +7430,9 @@ class Activity {
  */
 class ActivityManager extends Activity {
     #children; // managed Activity objects
-    #stopped; // true iff !this.multiple_stops and this.stop() has been called, false otherwise
     constructor(multiple_stops = false) {
         super(multiple_stops);
         this.#children = [];
-        this.#stopped = false;
     }
     /** add an Activity to this.#children
      *  @param {Activity} activity
@@ -12686,14 +12679,12 @@ class EvalWorker extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_0__/*
     get keepalive() { return this.#keepalive; }
     get id() { return this.#id; }
     stop() {
-        if (!this.stopped) { // this.stopped is from parent class Activity
-            this.#reset_event_handlers();
-            this.#current_expression?.stop();
-            this.#current_expression = undefined;
-            this.#worker?.terminate();
-            this.#worker = undefined;
-            super.stop(); // this.stopped will be true because multiple_stops = false
-        }
+        this.#reset_event_handlers();
+        this.#current_expression?.stop();
+        this.#current_expression = undefined;
+        this.#worker?.terminate();
+        this.#worker = undefined;
+        super.stop(); // this.stopped will be true because multiple_stops = false
     }
     async eval(expression, eval_context) {
         if (this.stopped) {
@@ -12871,12 +12862,10 @@ class EvalWorker extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_0__/*
         };
     }
     #reset_event_handlers() {
-        if (!this.stopped) {
-            if (this.#worker) {
-                this.#worker.onmessage = null;
-                this.#worker.onerror = null;
-                this.#worker.onmessageerror = null;
-            }
+        if (this.#worker) {
+            this.#worker.onmessage = null;
+            this.#worker.onerror = null;
+            this.#worker.onmessageerror = null;
         }
     }
     // Safari does not support static initialization blocks in classes (at the time of writing), so do it this way:
