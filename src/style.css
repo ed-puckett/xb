@@ -141,6 +141,18 @@ xb-cell[data-type="javascript"] {
     --content-color: var(--theme-ty-javascript, hotpink);
 }
 
+.markdown-code-source {
+    max-width: fit-content;
+    padding: 0.25em;
+    margin-block-start: 1em;
+    margin-block-end:   0.5em;
+    border: 1px solid var(--theme-ui-rc, hotpink);
+}
+.markdown-code-source pre {
+    margin: 0;
+}
+
+
 /* html[data-cell-view]: none|hide|normal|full|presentation
  * - none:         cells are not displayed
  * - hide:         cells auto-hide; focused cell scrolls, other cells minimized
@@ -156,10 +168,10 @@ html[data-cell-view="none"] xb-cell {
 html[data-cell-view="hide"] xb-cell:not([data-active]) {
     display: block;
     max-height: 0.2rem;
-    border-width: 1px;
-    border-color: black;
     padding: 0;
     margin: 0.2rem;
+    border-width: 1px;
+    border-color: transparent;
 }
 html[data-cell-view="presentation"] xb-cell {
     display: none;
