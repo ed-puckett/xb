@@ -1,7 +1,6 @@
-copy licenses from packages copied from their dist
-KeySpec.#is_on_macos needs to be fixed
 make help document
 update README.md
+KeySpec.#is_on_macos needs to be fixed
 Firefox: saving document does not show save file picker, but instead just downloads file to default location with current filename
 some code in xb-manager/commands.ts should be implemented as methods in XbManager
 when rendering xb-cell with data type set to custom renderer, get error "renderer._render is not a function" in OutputContext._invoke_renderer() -- examples/test.html, set data-type on an xb-cell
@@ -18,7 +17,6 @@ mobile: menus are not updated after reloaded
 settings schema changes are not reflected in user's databases without purging the old settings (!) (see: reset_to_standard_themes_settings)
 need to listen for and respond to settings changes (from other instances, too)
 review the way global_eval_context is used/partitioned
-test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 XbManager: root element (use instead of document, etc, for e.g., querySelector())
 allow multiple disjoint XbManager instances controlling different documents (e.g., for Help)
 think about: maintain (weak) list of XbManager instances, require non-overlapping root elements, be able to identify an XbManager given a child element; eliminate need for CellElement._set_xb()
@@ -31,6 +29,8 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* copy licenses from packages copied from their dist
+* test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 * output markdown "source code" ($ specifier on ```) in a specific css style (class="markdown-code-source")
 * add export option to eliminate data-active setting on <xb-cell> elements when saving, thereby using the first cell (default) as the active cell when loading the saved document
 * set-mode-* should be set-type-*

@@ -34,7 +34,6 @@ declare -a FILES_TO_COPY=(
     'node_modules/sprintf-js/dist/sprintf.min.js'
     'node_modules/sprintf-js/dist/sprintf.min.js.map'
     'node_modules/marked/marked.min.js'
-    'node_modules/katex'
     'node_modules/rxjs/dist/bundles/rxjs.umd.min.js'
     'node_modules/rxjs/dist/bundles/rxjs.umd.min.js.map'
     'node_modules/d3/dist/d3.min.js'
@@ -47,6 +46,19 @@ declare -a FILES_TO_COPY=(
 
 declare -a DIRECTORIES_TO_COPY=(
 #   ---directory---                --- destination--- <<< (pairs of entries)
+    'node_modules/katex/dist'      'katex-dist'
+)
+
+declare -a LICENSES_TO_GATHER=(
+#   ---package-name---             ---license-file--- <<< (pairs of entries)
+    'sprintf'                      'node_modules/sprintf-js/LICENSE'
+    'marked'                       'node_modules/marked/LICENSE.md'
+    'rxjs'                         'node_modules/rxjs/LICENSE.txt'
+    'd3'                           'node_modules/d3/LICENSE'
+    'plotly'                       'node_modules/plotly.js-dist/LICENSE'
+    'graphviz'                     'node_modules/@hpcc-js/wasm/LICENSE'
+    'd3-graphviz'                  'node_modules/d3-graphviz/LICENSE'
+    'algebrite'                    'node_modules/algebrite/LICENSE'
 )
 
 cd "${ROOT_DIR}"
@@ -64,10 +76,29 @@ for file_index in "${!FILES_TO_COPY[@]}"; do
     declare file="${FILES_TO_COPY[file_index]}"
     cp -a "${file}" "${DIST_DIR}"
 done
+
 for (( i = 0; i < ${#DIRECTORIES_TO_COPY[@]}; i += 2 )); do
     declare directory="${DIRECTORIES_TO_COPY[i]}"
     declare destination="${DIRECTORIES_TO_COPY[i+1]}"
     cp -a "${directory}" "${DIST_DIR}/${destination}"
+done
+
+declare GATHERED_LICENSES_FILE="${DIST_DIR}/additional-licenses.txt"
+declare GATHERED_LICENSES_FILE_SEPARATOR=$'\n======================================================================'
+cat >"${GATHERED_LICENSES_FILE}" <<EOF
+ADDITIONAL LICENSES FOR COPIED PACKAGES
+${GATHERED_LICENSES_FILE_SEPARATOR}
+EOF
+for (( i = 0; i < ${#LICENSES_TO_GATHER[@]}; i += 2 )); do
+    declare package_name="${LICENSES_TO_GATHER[i]}"
+    declare license_file="${LICENSES_TO_GATHER[i+1]}"
+    { 
+        echo "Package: ${package_name}";
+        echo;
+        cat "${license_file}"
+        echo;
+        echo "${GATHERED_LICENSES_FILE_SEPARATOR}";
+    } >>"${GATHERED_LICENSES_FILE}"
 done
 
 if [[ -z "${copy_only}" ]]; then

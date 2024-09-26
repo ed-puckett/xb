@@ -1,7 +1,7 @@
 // @ts-ignore  // types not available for the imported module
-import imported_katex from 'dist/katex/dist/katex.mjs';
+import imported_katex from 'dist/katex-dist/katex.mjs';
 
-import 'dist/katex/dist/katex.min.css';  // webpack implementation
+import 'dist/katex-dist/katex.min.css';  // webpack implementation
 import './style.css';  // webpack implementation
 
 /* --- OLD DYNAMIC IMPORT WAY ---
