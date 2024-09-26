@@ -1,9 +1,9 @@
-javascript renderer eval environment: does bg() need a catch handler?
-add export option to eliminate data-active setting on <xb-cell> elements when saving, thereby using the first cell (default) as the active cell when loading the saved document
+output markdown "source code" ($ specifier on ```) in a specific css style
 copy licenses from packages copied from their dist
 KeySpec.#is_on_macos needs to be fixed
 make help document
 update README.md
+Firefox: saving document does not show save file picker, but instead just downloads file to default location with current filename
 some code in xb-manager/commands.ts should be implemented as methods in XbManager
 when rendering xb-cell with data type set to custom renderer, get error "renderer._render is not a function" in OutputContext._invoke_renderer() -- examples/test.html, set data-type on an xb-cell
 improve appearance of notifications, AlertDialog, ConfirmDialog and SettingsDialog
@@ -32,6 +32,9 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* add export option to eliminate data-active setting on <xb-cell> elements when saving, thereby using the first cell (default) as the active cell when loading the saved document
+* set-mode-* should be set-type-*
+* javascript renderer eval environment: does bg() need a catch handler?  (it has one)
 * javascript renderer: code_to_run uses bg() but not end_bg()
 * does an ActivityManager ever release activities once they are done?
 * multiple bg()/end_bg()-using code sections in a markdown document will interfere when end_bg() is called in one (will also stop the other)

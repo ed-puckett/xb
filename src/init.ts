@@ -13,6 +13,10 @@ import {
 } from 'src/xb-manager/_';
 
 import {
+    XbCellElement,
+} from 'src/xb-cell-element/_';
+
+import {
     reset_to_initial_text_renderer_factories,
 } from 'src/renderer/factories';
 
@@ -183,9 +187,15 @@ export function show_initialization_failed(reason: unknown) {
  *        must be one of _valid_cell_view_values.  If undefined, then use current
  *        document's cell_view setting or don't specify cell_view at all if not set
  *        in document.
+ * @param {Boolean} (default false) whether or not to preserve "data-active" attribute
+ *        on active cell.
  * @return {string} the HTML source string
  */
-export async function save_serializer(bootstrap_script_src_choice?: string, cell_view?: string): Promise<string> {
+export async function save_serializer(
+    bootstrap_script_src_choice?: string,
+    cell_view?:                   string,
+    active_cell:                  boolean = false,
+): Promise<string> {
     if (typeof cell_view !== 'undefined' && !_valid_cell_view_values.includes(cell_view)) {
         throw new Error(`illegal cell_view value: ${cell_view}`);
     }
@@ -207,6 +217,8 @@ export async function save_serializer(bootstrap_script_src_choice?: string, cell
     for (const node of main_element.childNodes) {
         if (node.nodeType === Node.TEXT_NODE && node.nodeValue !== null) {
             contents_segments.push(node.nodeValue);  // the text of the TEXT node
+        } else if (node instanceof XbCellElement) {
+            contents_segments.push(node.getOuterHTML(active_cell));
         } else if (node instanceof Element) {
             contents_segments.push(node.outerHTML);
         } else {

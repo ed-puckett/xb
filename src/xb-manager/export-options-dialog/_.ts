@@ -53,6 +53,8 @@ export class ExportOptionsDialog extends Dialog {
             accept_button_label:  'Continue',
         });
 
+        // --- bootstrap script choices ---
+
         const bss_choices_default = bootstrap_script_src_alternatives_default;
         const bss_choices = Object.entries(get_bootstrap_script_src_alternatives())
             .map( ([ choice, { description, url } ]: [ choice: string, _: { description: string, url: string } ]) => {
@@ -62,6 +64,8 @@ export class ExportOptionsDialog extends Dialog {
                 };
             } );
         create_radio_control(this._dialog_form_content, 'Bootstrap script', 'bootstrap_script_src', bss_choices_default, bss_choices);
+
+        // --- cell view ---
 
         const cv_current = document.documentElement.getAttribute(cell_view_attribute_name);
         const cv_unset_choice = '(unset)';
@@ -82,6 +86,24 @@ export class ExportOptionsDialog extends Dialog {
             ...cv_choices_standard,
         ];
         create_select_control(this._dialog_form_content, 'Cell view', 'cell_view', cv_choices_default, cv_choices);
+
+        // --- save active cell? ---
+
+        create_element({
+            parent: this._dialog_form_content,
+            tag: 'label',
+            children: [
+                'Save active cell setting',  // string: create text node
+                {
+                    tag: 'input',
+                    attrs: {
+                        type: 'checkbox',
+                        name: 'active_cell',
+                        checked: undefined,
+                    },
+                },
+            ],
+        });
     }
 }
 

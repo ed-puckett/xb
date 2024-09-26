@@ -485,6 +485,12 @@ dialog .dialog-text {
 
 /* === settings-dialog === */
 
+dialog.export-options-dialog .dialog-form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
 dialog.export-options-dialog fieldset {
     display: flex;
     flex-direction: column;
@@ -507,13 +513,9 @@ dialog.export-options-dialog fieldset input[type="radio"] {
     height: 1em;  /* prevent button from stretching in height on chromium, affecting "active" outline */
 }
 dialog.export-options-dialog form select {
-    margin: 1.5em 1em 0 0.5em;
     padding: 0 0.5em;
     color:            var(--theme-si-fg, hotpink);
     background-color: var(--theme-si-bg, hotpink);
-}
-dialog.export-options-dialog form button {
-    margin: 1em 1em 0 0;
 }
 @supports selector(:has(*)) {
     dialog.export-options-dialog fieldset label:has(input[type="radio"]:checked) {
