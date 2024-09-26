@@ -45,7 +45,7 @@ import {
 // - the opening ``` may be optionally followed by:
 //   -- renderer source type (e.g., "javascript", the default)
 //   -- then either $ or ! or both in either order:
-//      --- $ indicates that the "source" should be output
+//      --- $ indicates that the "source" should be output (in a block with css class: eval_code_source_css_class)
 //      --- ! indicates that the source should be rendered (executed) and output
 // - the source type, $ and ! can be separated by any amount of whitespace, or none
 
@@ -60,6 +60,7 @@ const block_tex_match_re = /^\$\$([^$]+?)\$\$/;
 const eval_code_start_re = /^[`]{3}[\s]*[^!$\s\n]*[\s!$]*[\n]/;
 const eval_code_match_re = /^[`]{3}[\s]*(?<source_type>[^!$\s\n]*)[\s]*((?<flags_exec>[!])|(?<flags_show_exec>[$][\s]*[!])|(?<flags_exec_show>[!][\s]*[$]))[\s]*[\n](?<code>.*?)[`]{3}/s;
 const eval_code_source_type_default = JavaScriptRenderer.type;
+const eval_code_source_css_class = 'markdown-code-source';
 
 
 type walkTokens_token_type = {
@@ -137,7 +138,7 @@ export class MarkdownRenderer extends TextBasedRenderer {
                                 throw new Error(`cannot find renderer for source type "${source_type}"`);
                             }
                             const markup_segments: string[] = [];
-                            function add_segment(renderer_factory: RendererFactory, text_to_render: string) {
+                            function add_segment(renderer_factory: RendererFactory, text_to_render: string, css_class?: string) {
                                 const output_element_id = generate_object_id();
                                 deferred_evaluations.push({
                                     output_element_id,
@@ -148,11 +149,11 @@ export class MarkdownRenderer extends TextBasedRenderer {
                                     },
                                 });
                                 // this is the element we will render to from deferred_evaluations:
-                                markup_segments.push(`<div id="${output_element_id}"></div>`);
+                                markup_segments.push(`<div id="${output_element_id}"${css_class ? ` class="${css_class}"` : ''}></div>`);
                             }
                             if (show && text) {
                                 // render the source text without executing
-                                add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n');
+                                add_segment(MarkdownRenderer, '```'+source_type+'\n'+text+'\n```\n', eval_code_source_css_class);
                             }
                             // render/execute the source text
                             add_segment(renderer_factory, text);
