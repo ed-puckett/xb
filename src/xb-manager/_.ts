@@ -472,19 +472,20 @@ export class XbManager {
 
         let bootstrap_script_src = bootstrap_script_src_alternatives_default;
         let cell_view            = undefined;
+        let active_cell          = false;
         if (show_options_dialog) {
             const options_dialog_result = await ExportOptionsDialog.run();
             if (!options_dialog_result) {
                 this.notification_manager.add('save canceled');
                 return false;  // indicate: canceled
             }
-            ( { bootstrap_script_src, cell_view } = Object.fromEntries([ ...options_dialog_result ]) as any );
+            ( { bootstrap_script_src, cell_view, active_cell } = Object.fromEntries([ ...options_dialog_result ]) as any );
             if (!cell_view) {
                 cell_view = undefined;  // "unset"
             }
         }
 
-        const bound_serializer = save_serializer.bind(null, bootstrap_script_src, cell_view);
+        const bound_serializer = save_serializer.bind(null, bootstrap_script_src, cell_view, active_cell);
         const save_result = await fs_interface.save(bound_serializer, {
             file_handle: perform_save_as ? undefined : this.#file_handle,
             prompt_options: {

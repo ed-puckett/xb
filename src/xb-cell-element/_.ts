@@ -255,16 +255,22 @@ export class XbCellElement extends HTMLElement {
      * This is done so that CodeMirror stuff does not get included, only the text.
      */
     get outerHTML (): string {
+        return this.getOuterHTML();
+    }
+
+    getOuterHTML(include_active_cell_setting: boolean = false): string {
         const open_tag_segments = [
             `<${this.CLASS.custom_element_name}`,
         ];
         //!!! attributes values' containing " character are incorrectly translated to \"
         for (const name of this.getAttributeNames()) {
-            const value = this.getAttribute(name);
-            if (value === null) {
-                open_tag_segments.push(name);
-            } else {
-                open_tag_segments.push(`${name}=${make_string_literal(value, true)}`);
+            if (name !== 'data-active' || include_active_cell_setting) {
+                const value = this.getAttribute(name);
+                if (!value) {
+                    open_tag_segments.push(name);
+                } else {
+                    open_tag_segments.push(`${name}=${make_string_literal(value, true)}`);
+                }
             }
         }
         const open_tag = open_tag_segments.join(' ') + '>';
