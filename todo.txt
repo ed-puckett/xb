@@ -1,9 +1,8 @@
 make help document
 update README.md
+documentation: tell Firefox users about "Always ask you where to save files" setting
 KeySpec.#is_on_macos needs to be fixed
-Firefox: saving document does not show save file picker, but instead just downloads file to default location with current filename
 some code in xb-manager/commands.ts should be implemented as methods in XbManager
-when rendering xb-cell with data type set to custom renderer, get error "renderer._render is not a function" in OutputContext._invoke_renderer() -- examples/test.html, set data-type on an xb-cell
 improve appearance of notifications, AlertDialog, ConfirmDialog and SettingsDialog
 data-active on cell is (sometimes?) ignored when loading document (focus is set to first cell even when data-active="true" is set on last cell)
 assets_server_url(): in lib but highly dependent on src-dependent information like bootstrap script location
@@ -20,7 +19,6 @@ review the way global_eval_context is used/partitioned
 XbManager: root element (use instead of document, etc, for e.g., querySelector())
 allow multiple disjoint XbManager instances controlling different documents (e.g., for Help)
 think about: maintain (weak) list of XbManager instances, require non-overlapping root elements, be able to identify an XbManager given a child element; eliminate need for CellElement._set_xb()
-how does parent ActivityManager get notified if a child stops?  necessary?
 CellElement.outerHTML does not correctly translate attribute values that contain a " character (should maybe provide a function in dom-tools)
 determine if the component attribute observers would be useful in CellElement
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
@@ -29,6 +27,9 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* Firefox: saving document does not show save file picker, but instead just downloads file to default location with current filename (fixed by setting "Always ask you where to save files")
+* how does parent ActivityManager get notified if a child stops?  necessary?
+* when rendering xb-cell with data type set to custom renderer, get error "renderer._render is not a function" in OutputContext._invoke_renderer() -- examples/test.html, set data-type on an xb-cell
 * copy licenses from packages copied from their dist
 * test behavior of XbManager.singleton.#activity_manager: do activities eventually get purged after they are stopped?
 * output markdown "source code" ($ specifier on ```) in a specific css style (class="markdown-code-source")
