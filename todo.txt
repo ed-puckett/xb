@@ -1,9 +1,12 @@
+convert stylesheets to use css nesting which is now supported by Firefox ESR (now 128.3.0esr)
+canceling save-as creates notification "document saved" (Firefox, not Chromium)
 make help document
 update README.md
 documentation: tell Firefox users about "Always ask you where to save files" setting
 KeySpec.#is_on_macos needs to be fixed
 some code in xb-manager/commands.ts should be implemented as methods in XbManager
 improve appearance of notifications, AlertDialog, ConfirmDialog and SettingsDialog
+replace marked with remark?  See: https://github.com/remarkjs/remark
 data-active on cell is (sometimes?) ignored when loading document (focus is set to first cell even when data-active="true" is set on last cell)
 assets_server_url(): in lib but highly dependent on src-dependent information like bootstrap script location
 xb.set_structure_modified and associated logic is kludgey and hard to maintain
@@ -23,10 +26,12 @@ CellElement.outerHTML does not correctly translate attribute values that contain
 determine if the component attribute observers would be useful in CellElement
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
 tsconfig: module, moduleResolution
+make legacy_file_input_element_id element ephemeral in lib/sys/fs-interface.ts
 search for uses of XbManager.singleton (should be few; instead: access through OutputContext, XbCellElement, KeyEventManager or Menu)
 
 
 --- DONE ---
+* remove use of css class "with-menubar" now that :has() is supported by Firefox ESR (now 128.3.0esr)
 * Firefox: saving document does not show save file picker, but instead just downloads file to default location with current filename (fixed by setting "Always ask you where to save files")
 * how does parent ActivityManager get notified if a child stops?  necessary?
 * when rendering xb-cell with data type set to custom renderer, get error "renderer._render is not a function" in OutputContext._invoke_renderer() -- examples/test.html, set data-type on an xb-cell

@@ -31,7 +31,7 @@ body {
 
 header {
 }
-.with-menubar header {
+header:has(menu.menubar) {  /* header containing classic menubar menu */
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
@@ -50,7 +50,7 @@ main {
     max-width:  100dvw;
     scroll-padding: 2rem;  /* mostly useful to make sure a little output is shown when scrolling to a cell */
 }
-.with-menubar main {
+header:has(menu.menubar) ~ main {  /* main preceded by header containing classic menubar */
     max-height: calc(100dvh - var(--header-height));
 }
 
@@ -380,7 +380,7 @@ html[data-cell-view="full"] .cm-scroller {
 .notification-area {  /* with ellipsis menu */
     padding-top: 1.75rem;
 }
-.with-menubar header ~ .notification-area {  /* with classic menu */
+header:has(menu.menubar) ~ .notification-area {  /* .notification-area preceded by header containing classic menubar */
     padding-top: calc(var(--header-height) + 0.25rem);
 }
 
@@ -529,10 +529,8 @@ dialog.export-options-dialog form select {
     color:            var(--theme-si-fg, hotpink);
     background-color: var(--theme-si-bg, hotpink);
 }
-@supports selector(:has(*)) {
-    dialog.export-options-dialog fieldset label:has(input[type="radio"]:checked) {
-        outline: 1px solid var(--theme-si-fg, hotpink);
-    }
+dialog.export-options-dialog fieldset label:has(input[type="radio"]:checked) {
+    outline: 1px solid var(--theme-si-fg, hotpink);
 }
 
 
