@@ -424,14 +424,6 @@ export class XbManager {
             });
             this.#menu_commands_subscription = this.#menu.commands.subscribe(this.#perform_command.bind(this));
             this.#menu_selects_subscription = this.#menu.selects.subscribe(this.#update_menu_state.bind(this));
-            if (with_menubar) {
-                // the class "with-menubar" facilitates layout without needing the
-                // css :has() pseudo-class, which is great, but is not supported
-                // at the time of writing by Firefox ESR (version 115).
-                document.body.classList.add('with-menubar');
-            } else {
-                document.body.classList.remove('with-menubar');
-            }
         }
     }
 
