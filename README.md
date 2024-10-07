@@ -8,9 +8,9 @@ In addition, *x*b can host executable content in a Web-based sandbox, and gives 
 
 ## Availability
 
-* [Examples](https://blackguard.github.io/xb/examples/index.html)
-* [Blank notebook](https://blackguard.github.io/xb/dist/index.html)
-* [Source code](https://github.com/blackguard/xb)
+* [Examples](https://ed-puckett.github.io/xb/examples/index.html)
+* [Blank notebook](https://ed-puckett.github.io/xb/dist/index.html)
+* [Source code](https://github.com/ed-puckett/xb)
 
 ---
 

@@ -31,7 +31,7 @@ const _bootstrap_script_src_alternative_descriptions = {
 };
 export const bootstrap_script_src_alternatives_default = 'original';
 
-const _external_bootstrap_link = 'https://blackguard.github.io/xb/dist/xb-bootstrap.js';
+const _external_bootstrap_link = 'https://ed-puckett.github.io/xb/dist/xb-bootstrap.js';
 
 // see also below: get_bootstrap_script_src_alternatives()
 

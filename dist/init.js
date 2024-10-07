@@ -10971,7 +10971,7 @@ const _bootstrap_script_src_alternative_descriptions = {
     external: 'external !!!',
 };
 const bootstrap_script_src_alternatives_default = 'original';
-const _external_bootstrap_link = 'https://blackguard.github.io/xb/dist/xb-bootstrap.js';
+const _external_bootstrap_link = 'https://ed-puckett.github.io/xb/dist/xb-bootstrap.js';
 // see also below: get_bootstrap_script_src_alternatives()
 // === CELL-VIEW / AUTO-EVAL DATA ===
 const cell_view_attribute_name = 'data-cell-view'; // set on document.documentElement
