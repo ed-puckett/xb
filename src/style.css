@@ -30,17 +30,20 @@ body {
 }
 
 header {
-}
-header:has(menu.menubar) {  /* header containing classic menubar menu */
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
+    /* header without classic menubar menu */
+    /* (just default settings */
 
-    height: var(--header-height);
-    background-color: var(--theme-si-bg, hotpink);
+    &:has(menu.menubar) {  /* header containing classic menubar menu */
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
 
-    border: 0px solid var(--theme-si-rc, hotpink);
-    border-bottom-width: 1px;
+        height: var(--header-height);
+        background-color: var(--theme-si-bg, hotpink);
+
+        border: 0px solid var(--theme-si-rc, hotpink);
+        border-bottom-width: 1px;
+    }
 }
 
 main {
@@ -52,10 +55,6 @@ main {
 }
 header:has(menu.menubar) ~ main {  /* main preceded by header containing classic menubar */
     max-height: calc(100dvh - var(--header-height));
-}
-
-main > xb-cell {
-    margin: 0 0 0.25em 0;
 }
 
 .xb-cell-output {
@@ -87,10 +86,15 @@ main > xb-cell {
 xb-cell {
     --content-color: lightgrey;
 
+    display: block;
     overflow: hidden;
 
-    display: block;
-    margin:  0;
+    margin: 0 0 0.25em 0;
+    padding: 0;
+    max-height: fit-content;
+
+    border: 1px solid var(--content-color);
+    border-radius: 0.5em;
 
     caret-color: red;
     /*outline: 0px solid transparent;*/  /* disable default contenteditable outline */
@@ -99,46 +103,78 @@ xb-cell {
     font-family: monospace;
 
     color: var(--theme-ui-fg, hotpink);
-/*    background-color: var(--content-color); */
     background-image: linear-gradient(90deg, var(--content-color), transparent);
+    /* background-color: var(--content-color); */
 
-    max-height: fit-content;
-    padding: 0;
-    border: 1px solid var(--content-color);
-    border-radius: 0.5em;
-}
-xb-cell > * {
-    /* make sure --content-color is restricted to border and padding,
-     * and does not bleed through transparent children
+    &::before {
+        content: "markdown";  /* markdown is the default */
+        display: inline-block;
+        padding: 0 0 0 0.5em;
+        max-width: fit-content;
+    }
+
+    &[data-active][data-type]::before {
+        font-weight: bold;
+    }
+
+    & > * {
+        /* make sure --content-color is restricted to border and padding,
+         * and does not bleed through transparent children
+         */
+        background-color: var(--theme-ui-bg, hotpink);
+    }
+
+    /* data-type handling */
+
+    &[data-type]::before {
+        content: attr(data-type);
+    }
+
+    &,  /* markdown is the default */
+    &[data-type="markdown"] {
+        --content-color: var(--theme-ty-markdown, hotpink);
+    }
+    &[data-type="plain"] {
+        --content-color: var(--theme-ty-plain, hotpink);
+    }
+    &[data-type="tex"] {
+        --content-color: var(--theme-ty-tex, hotpink);
+    }
+    &[data-type="javascript"] {
+        --content-color: var(--theme-ty-javascript, hotpink);
+    }
+
+    /* data-cell-view handling */
+
+    /* html[data-cell-view]: none|hide|normal|full|presentation
+     * - none:         cells are not displayed
+     * - hide:         cells auto-hide; focused cell scrolls, other cells minimized
+     * - normal:       all cells scroll (default)
+     * - full:         all cells shown completely
+     * - presentation: like none, but also the header element is hidden and no document close warning is issued
+     *   -- in presentation view, cells with css class "show-in-presentation" will be shown as in "normal" view
      */
-    background-color: var(--theme-ui-bg, hotpink);
-}
 
-xb-cell::before {
-    content: "markdown";  /* markdown is the default */
-    display: inline-block;
-    padding: 0 0 0 0.5em;
-    max-width: fit-content;
-}
-xb-cell[data-type]::before {
-    content: attr(data-type);
-}
-xb-cell[data-active][data-type]::before {
-    font-weight: bold;
-}
-
-xb-cell,  /* markdown is the default */
-xb-cell[data-type="markdown"] {
-    --content-color: var(--theme-ty-markdown, hotpink);
-}
-xb-cell[data-type="plain"] {
-    --content-color: var(--theme-ty-plain, hotpink);
-}
-xb-cell[data-type="tex"] {
-    --content-color: var(--theme-ty-tex, hotpink);
-}
-xb-cell[data-type="javascript"] {
-    --content-color: var(--theme-ty-javascript, hotpink);
+    html[data-cell-view="none"] & {
+        display: none;
+    }
+    html[data-cell-view="hide"] &:not([data-active]) {
+        display: block;
+        max-height: 0.2rem;
+        padding: 0;
+        margin: 0.2rem;
+        border-width: 1px;
+        border-color: transparent;
+    }
+    html[data-cell-view="presentation"] & {
+        display: none;
+    }
+    &,
+    html[data-cell-view="presentation"] &.show-in-presentation {
+        display: block;
+        max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */
+        transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+    }
 }
 
 .markdown-code-source {
@@ -147,40 +183,10 @@ xb-cell[data-type="javascript"] {
     margin-block-start: 1em;
     margin-block-end:   0.5em;
     border: 1px solid var(--theme-ui-rc, hotpink);
-}
-.markdown-code-source pre {
-    margin: 0;
-}
 
-
-/* html[data-cell-view]: none|hide|normal|full|presentation
- * - none:         cells are not displayed
- * - hide:         cells auto-hide; focused cell scrolls, other cells minimized
- * - normal:       all cells scroll (default)
- * - full:         all cells shown completely
- * - presentation: like none, but also the header element is hidden and no document close warning is issued
- *   -- in presentation view, cells with css class "show-in-presentation" will be shown as in "normal" view
- */
-
-html[data-cell-view="none"] xb-cell {
-    display: none;
-}
-html[data-cell-view="hide"] xb-cell:not([data-active]) {
-    display: block;
-    max-height: 0.2rem;
-    padding: 0;
-    margin: 0.2rem;
-    border-width: 1px;
-    border-color: transparent;
-}
-html[data-cell-view="presentation"] xb-cell {
-    display: none;
-}
-xb-cell,
-html[data-cell-view="presentation"] xb-cell.show-in-presentation {
-    display: block;
-    max-height: calc(var(--cell-max-height-scrolling) + 2rem);  /* pad for margin, etc */
-    transition: max-height 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+    & pre {
+        margin: 0;
+    }
 }
 
 
@@ -231,7 +237,7 @@ html[data-cell-view="full"] .cm-scroller {
 }
 
 
-/* theme-aware graphics */
+/* === theme-aware graphics === */
 
 [data-source-media-type="application/graphviz"] svg polygon:not([fill="none"]) {
     fill: var(--theme-gr-bg, hotpink);
@@ -495,7 +501,7 @@ dialog .dialog-text {
 }
 
 
-/* === settings-dialog === */
+/* === dialog === */
 
 dialog.export-options-dialog .dialog-form-content {
     display: flex;
