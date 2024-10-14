@@ -183,19 +183,34 @@ export function show_initialization_failed(reason: unknown) {
 /** Serializer for use by save, save-as and export operations
  * @param {undefined|string} bootstrap_script_src_choice, must be one of the keys
  *        from the object returned by _basic_bootstrap_script_src_alternatives
- * @param {undefined|string} cell_view the initial cell view option; if not undefined,
- *        must be one of _valid_cell_view_values.  If undefined, then use current
- *        document's cell_view setting or don't specify cell_view at all if not set
- *        in document.
- * @param {Boolean} (default false) whether or not to preserve "data-active" attribute
- *        on active cell.
+ * @param {Object}: options?: {
+ *     cell_view?: string,  // the initial cell view option; if not undefined,
+ *                          // must be one of _valid_cell_view_values.
+ *                          // If undefined, then use current document's
+ *                          // cell_view setting or don't specify cell_view
+ *                          // at all if not set in document.
+ *
+ *     auto_eval?: boolean = false,  // set "auto-eval" on saved document?
+ *
+ *     active_cell?: boolean = false,  // whether or not to preserve the
+ *                                     // "data-active" attribute on the
+ *                                     // active cell.
+ * }
  * @return {string} the HTML source string
  */
 export async function save_serializer(
     bootstrap_script_src_choice?: string,
-    cell_view?:                   string,
-    active_cell:                  boolean = false,
+    options?: object
 ): Promise<string> {
+    options ??= {};
+    let {
+        cell_view,
+    } = (options as any);
+    const {
+        auto_eval   = false,
+        active_cell = false,
+    } = (options as any);
+
     if (typeof cell_view !== 'undefined' && !_valid_cell_view_values.includes(cell_view)) {
         throw new Error(`illegal cell_view value: ${cell_view}`);
     }
@@ -244,7 +259,7 @@ export async function save_serializer(
     const contents = contents_segments.join('');
     return `\
 <!DOCTYPE html>
-<html lang="en"${cell_view && (cell_view !== cell_view_values_default) ? ` ${cell_view_attribute_name}="${cell_view}"` : ''}${get_auto_eval() ? ` ${auto_eval_attribute_name}` : ''}>
+<html lang="en"${cell_view && (cell_view !== cell_view_values_default) ? ` ${cell_view_attribute_name}="${cell_view}"` : ''}${auto_eval ? ` ${auto_eval_attribute_name}` : ''}>
 <head>
     <meta charset="utf-8">
     <script src=${make_string_literal(bootstrap_script_src, true)}></script>

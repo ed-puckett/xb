@@ -24,6 +24,7 @@ import {
     get_valid_cell_view_values,
     get_cell_view_descriptions,
     cell_view_values_default,
+    get_auto_eval,
 } from 'src/init';
 
 
@@ -86,6 +87,24 @@ export class ExportOptionsDialog extends Dialog {
             ...cv_choices_standard,
         ];
         create_select_control(this._dialog_form_content, 'Cell view', 'cell_view', cv_choices_default, cv_choices);
+
+        // --- auto-eval? ---
+
+        create_element({
+            parent: this._dialog_form_content,
+            tag: 'label',
+            children: [
+                'Auto-eval notebook',  // string: create text node
+                {
+                    tag: 'input',
+                    attrs: {
+                        type: 'checkbox',
+                        name: 'auto_eval',
+                        checked: get_auto_eval() ? true : undefined,
+                    },
+                },
+            ],
+        });
 
         // --- save active cell? ---
 

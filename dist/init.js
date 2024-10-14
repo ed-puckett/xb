@@ -11107,15 +11107,25 @@ function show_initialization_failed(reason) {
 /** Serializer for use by save, save-as and export operations
  * @param {undefined|string} bootstrap_script_src_choice, must be one of the keys
  *        from the object returned by _basic_bootstrap_script_src_alternatives
- * @param {undefined|string} cell_view the initial cell view option; if not undefined,
- *        must be one of _valid_cell_view_values.  If undefined, then use current
- *        document's cell_view setting or don't specify cell_view at all if not set
- *        in document.
- * @param {Boolean} (default false) whether or not to preserve "data-active" attribute
- *        on active cell.
+ * @param {Object}: options?: {
+ *     cell_view?: string,  // the initial cell view option; if not undefined,
+ *                          // must be one of _valid_cell_view_values.
+ *                          // If undefined, then use current document's
+ *                          // cell_view setting or don't specify cell_view
+ *                          // at all if not set in document.
+ *
+ *     auto_eval?: boolean = false,  // set "auto-eval" on saved document?
+ *
+ *     active_cell?: boolean = false,  // whether or not to preserve the
+ *                                     // "data-active" attribute on the
+ *                                     // active cell.
+ * }
  * @return {string} the HTML source string
  */
-async function save_serializer(bootstrap_script_src_choice, cell_view, active_cell = false) {
+async function save_serializer(bootstrap_script_src_choice, options) {
+    options ??= {};
+    let { cell_view, } = options;
+    const { auto_eval = false, active_cell = false, } = options;
     if (typeof cell_view !== 'undefined' && !_valid_cell_view_values.includes(cell_view)) {
         throw new Error(`illegal cell_view value: ${cell_view}`);
     }
@@ -11165,7 +11175,7 @@ async function save_serializer(bootstrap_script_src_choice, cell_view, active_ce
     const contents = contents_segments.join('');
     return `\
 <!DOCTYPE html>
-<html lang="en"${cell_view && (cell_view !== cell_view_values_default) ? ` ${cell_view_attribute_name}="${cell_view}"` : ''}${get_auto_eval() ? ` ${auto_eval_attribute_name}` : ''}>
+<html lang="en"${cell_view && (cell_view !== cell_view_values_default) ? ` ${cell_view_attribute_name}="${cell_view}"` : ''}${auto_eval ? ` ${auto_eval_attribute_name}` : ''}>
 <head>
     <meta charset="utf-8">
     <script src=${(0,lib_sys_string_tools__WEBPACK_IMPORTED_MODULE_4__/* .make_string_literal */ .xA)(bootstrap_script_src, true)}></script>
@@ -33696,6 +33706,7 @@ class XbManager {
         }
         let bootstrap_script_src = src_init__WEBPACK_IMPORTED_MODULE_0__/* .bootstrap_script_src_alternatives_default */ .bI;
         let cell_view = undefined;
+        let auto_eval = (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .get_auto_eval */ .u1)();
         let active_cell = false;
         if (show_options_dialog) {
             const options_dialog_result = await _export_options_dialog___WEBPACK_IMPORTED_MODULE_13__/* .ExportOptionsDialog */ .F.run();
@@ -33703,12 +33714,21 @@ class XbManager {
                 this.notification_manager.add('save canceled');
                 return false; // indicate: canceled
             }
-            ({ bootstrap_script_src, cell_view, active_cell } = Object.fromEntries([...options_dialog_result]));
+            ({
+                bootstrap_script_src,
+                cell_view,
+                auto_eval = false,
+                active_cell = false,
+            } = Object.fromEntries([...options_dialog_result]));
             if (!cell_view) {
                 cell_view = undefined; // "unset"
             }
         }
-        const bound_serializer = src_init__WEBPACK_IMPORTED_MODULE_0__/* .save_serializer */ .HF.bind(null, bootstrap_script_src, cell_view, active_cell);
+        const bound_serializer = src_init__WEBPACK_IMPORTED_MODULE_0__/* .save_serializer */ .HF.bind(null, bootstrap_script_src, {
+            cell_view,
+            auto_eval,
+            active_cell,
+        });
         const save_result = await lib_sys_fs_interface__WEBPACK_IMPORTED_MODULE_1__/* .fs_interface */ .k.save(bound_serializer, {
             file_handle: perform_save_as ? undefined : this.#file_handle,
             prompt_options: {
@@ -34610,6 +34630,22 @@ class ExportOptionsDialog extends lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* 
             ...cv_choices_standard,
         ];
         create_select_control(this._dialog_form_content, 'Cell view', 'cell_view', cv_choices_default, cv_choices);
+        // --- auto-eval? ---
+        (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .Wh)({
+            parent: this._dialog_form_content,
+            tag: 'label',
+            children: [
+                'Auto-eval notebook', // string: create text node
+                {
+                    tag: 'input',
+                    attrs: {
+                        type: 'checkbox',
+                        name: 'auto_eval',
+                        checked: (0,src_init__WEBPACK_IMPORTED_MODULE_3__/* .get_auto_eval */ .u1)() ? true : undefined,
+                    },
+                },
+            ],
+        });
         // --- save active cell? ---
         (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .Wh)({
             parent: this._dialog_form_content,

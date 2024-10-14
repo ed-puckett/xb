@@ -1,9 +1,9 @@
-convert stylesheets to use css nesting which is now supported by Firefox ESR (now 128.3.0esr)
-canceling save-as creates notification "document saved" (Firefox, not Chromium)
+make notifications proceed from top-to-bottom
 make help document
 update README.md
 documentation: tell Firefox users about "Always ask you where to save files" setting
-KeySpec.#is_on_macos needs to be fixed
+KeySpec.#is_on_macos needs to be tested/fixed
+canceling save-as creates notification "document saved" (Firefox, not Chromium)
 some code in xb-manager/commands.ts should be implemented as methods in XbManager
 improve appearance of notifications, AlertDialog, ConfirmDialog and SettingsDialog
 replace marked with remark?  See: https://github.com/remarkjs/remark
@@ -23,7 +23,7 @@ XbManager: root element (use instead of document, etc, for e.g., querySelector()
 allow multiple disjoint XbManager instances controlling different documents (e.g., for Help)
 think about: maintain (weak) list of XbManager instances, require non-overlapping root elements, be able to identify an XbManager given a child element; eliminate need for CellElement._set_xb()
 CellElement.outerHTML does not correctly translate attribute values that contain a " character (should maybe provide a function in dom-tools)
-determine if the component attribute observers would be useful in CellElement
+determine if the component attribute observers would be useful in XbCellElement
 can't undo structural changes (e.g., deleting a cell, moving a cell, etc)
 tsconfig: module, moduleResolution
 make legacy_file_input_element_id element ephemeral in lib/sys/fs-interface.ts
@@ -31,6 +31,8 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* auto-eval should be an option in export dialog
+* convert stylesheets to use css nesting which is now supported by Firefox ESR (now 128.3.0esr)
 * remove use of css class "with-menubar" now that :has() is supported by Firefox ESR (now 128.3.0esr)
 * Firefox: saving document does not show save file picker, but instead just downloads file to default location with current filename (fixed by setting "Always ask you where to save files")
 * how does parent ActivityManager get notified if a child stops?  necessary?
