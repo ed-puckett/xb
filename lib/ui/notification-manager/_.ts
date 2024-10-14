@@ -48,7 +48,6 @@ export class NotificationManager {
         const area = this.#establish_area();
         const notification = create_element({
             parent: area,
-            before: area.firstElementChild,
             innerText: message,
             attrs: {
                 class: this.CLASS.notification_message_css_class,

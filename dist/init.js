@@ -10882,7 +10882,6 @@ class NotificationManager {
         const area = this.#establish_area();
         const notification = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .Wh)({
             parent: area,
-            before: area.firstElementChild,
             innerText: message,
             attrs: {
                 class: this.CLASS.notification_message_css_class,
