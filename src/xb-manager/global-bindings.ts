@@ -36,6 +36,7 @@ export function get_menubar_spec() {
             { label: 'Move down',       item: { command: 'move-down'             } },
             { label: 'Add before',      item: { command: 'add-before'            } },
             { label: 'Add after',       item: { command: 'add-after'             } },
+            { label: 'Duplicate',       item: { command: 'duplicate'             } },
             { label: 'Delete',          item: { command: 'delete'                } },
         ] },
 
@@ -93,6 +94,7 @@ export function get_ellipsis_menu_spec() {
             { label: 'Move down',       item: { command: 'move-down'             } },
             { label: 'Add before',      item: { command: 'add-before'            } },
             { label: 'Add after',       item: { command: 'add-after'             } },
+            { label: 'Duplicate',       item: { command: 'duplicate'             } },
             { label: 'Delete',          item: { command: 'delete'                } },
         ] },
 
@@ -154,6 +156,7 @@ export function get_global_initial_key_map_bindings() {
         'move-down':             [ 'CmdOrCtrl-Alt-Down' ],
         'add-before':            [ 'CmdOrCtrl-Alt-Shift-Up' ],
         'add-after':             [ 'CmdOrCtrl-Alt-Shift-Down' ],
+        'duplicate':             [ 'CmdOrCtrl-Alt-Shift-:' ],
         'delete':                [ 'CmdOrCtrl-Alt-Backspace' ],
 
         'set-type-plain':        [ 'Alt-T t', 'Alt-T p' ],
@@ -208,6 +211,7 @@ export function get_global_command_bindings() {
         'move-down':             commands.command_handler__move_down,
         'add-before':            commands.command_handler__add_before,
         'add-after':             commands.command_handler__add_after,
+        'duplicate':             commands.command_handler__duplicate,
         'delete':                commands.command_handler__delete,
 
         'set-type-plain':        commands.command_handler__set_type_plain,

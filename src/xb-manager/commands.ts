@@ -319,7 +319,7 @@ export function command_handler__move_down(command_context: CommandContext<XbMan
     return move_helper(command_context, true);
 }
 
-function add_cell_helper(command_context: CommandContext<XbManager>, add_before: boolean) {
+function add_cell_helper(command_context: CommandContext<XbManager>, add_before: boolean, duplicate: boolean = false) {
     if (!command_context.dm.interactive) {
         return false;
     }
@@ -338,6 +338,9 @@ function add_cell_helper(command_context: CommandContext<XbManager>, add_before:
             return false;
         } else {
             new_cell.type = current_cell.type;
+            if (duplicate) {
+                new_cell.set_text(current_cell.get_text());
+            }
             new_cell.scroll_into_view(true);
             return true;
         }
@@ -350,6 +353,10 @@ export function command_handler__add_before(command_context: CommandContext<XbMa
 
 export function command_handler__add_after(command_context: CommandContext<XbManager>): boolean {
     return add_cell_helper(command_context, false);
+}
+
+export function command_handler__duplicate(command_context: CommandContext<XbManager>): boolean {
+    return add_cell_helper(command_context, false, true);
 }
 
 export async function command_handler__delete(command_context: CommandContext<XbManager>): Promise<boolean> {
