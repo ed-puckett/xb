@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.2",
-    "@codemirror/lang-markdown": "^6.2.5",
-    "@replit/codemirror-vim": "^6.1.0",
+    "@codemirror/lang-markdown": "^6.3.0",
+    "@replit/codemirror-vim": "^6.2.1",
     "@tsconfig/node20": "^20.1.4",
     "algebrite": "^1.4.0",
     "chart.js": "^2.9.4",
