@@ -34402,6 +34402,28 @@ function move_helper(command_context, move_down) {
             }
             const parent = before ? before.parentElement : command_context.dm.cell_parent;
             (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .NM)(cell, { parent, before });
+            // now move associated output elements, if any
+            // note that we support multiple output elements per cell, even
+            // though there is usually only one.
+            const output_elements = [...document.querySelectorAll(cell.get_output_element_selector())];
+            for (const oe of output_elements.toReversed()) { // reverse because assuming output elements follow cell
+                const oe_next_sibling = oe.nextSibling;
+                // move newline text node, if any, following output element, too.
+                // it is included for formatting....
+                if (oe_next_sibling && oe_next_sibling.nodeType === Node.TEXT_NODE && oe_next_sibling.nodeValue === '\n') {
+                    (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .NM)(oe_next_sibling, {
+                        parent,
+                        before: cell.nextElementSibling,
+                    });
+                }
+                // now move the output element
+                // note that we are moving these nodes in reverse order
+                // because they are being moved releative to cell.nextElementSibling
+                (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .move_node */ .NM)(oe, {
+                    parent,
+                    before: cell.nextSibling,
+                });
+            }
             cell.scroll_into_view(true);
             command_context.dm.set_structure_modified();
             return true;

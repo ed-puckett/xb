@@ -1,5 +1,4 @@
-add duplicate-cell command
-moving a cell disassociates its output element (if any); it then no longer follows the cell
+add cell duplicate command
 make help document
 update README.md
 documentation: tell Firefox users about "Always ask you where to save files" setting
@@ -32,6 +31,7 @@ search for uses of XbManager.singleton (should be few; instead: access through O
 
 
 --- DONE ---
+* moving a cell disassociates its output element (if any); it then no longer follows the cell
 * when adding a new cell, set same type as current cell
 * make notifications proceed from top-to-bottom
 * auto-eval should be an option in export dialog
