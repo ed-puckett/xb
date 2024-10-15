@@ -34422,6 +34422,7 @@ function add_cell_helper(command_context, add_before) {
         return false;
     }
     else {
+        const current_cell = command_context.target;
         command_context.dm.set_structure_modified();
         const this_cell = command_context.target;
         const before = add_before
@@ -34433,6 +34434,7 @@ function add_cell_helper(command_context, add_before) {
             return false;
         }
         else {
+            new_cell.type = current_cell.type;
             new_cell.scroll_into_view(true);
             return true;
         }
