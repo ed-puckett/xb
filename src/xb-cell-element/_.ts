@@ -5,6 +5,14 @@ import {
 } from 'src/xb-manager/_';
 
 import {
+    OutputContextLike,
+} from 'src/output-context/types';
+
+import {
+    OutputContext,
+} from 'src/output-context/_';
+
+import {
     clear_element,
 } from 'lib/ui/dom-tools';
 
@@ -45,12 +53,20 @@ export async function load_stylesheet() {
 export class XbCellElement extends HTMLElement {
     get CLASS (){ return this.constructor as typeof XbCellElement; }
 
-    static custom_element_name = 'xb-cell';
+    static #custom_element_name = 'xb-cell';
+    static get custom_element_name (){ return this.#custom_element_name; }
 
-    static attribute__active = 'data-active';
-    static #attribute__type  = 'data-type';
+    static #css_class__show_in_presentation = 'show-in-presentation';
+    static get css_class__show_in_presentation (){ return this.#css_class__show_in_presentation; }
 
-    static default_type = 'markdown';
+    static #attribute__active = 'data-active';
+    static get attribute__active (){ return this.#attribute__active; }
+
+    static #attribute__type = 'data-type';
+    static get attribute__type (){ return this.#attribute__type; }
+
+    static #default_type = 'markdown';
+    static get default_type (){ return this.#default_type; }
 
     #codemirror: undefined|CodemirrorInterface = undefined;
     #event_listener_manager = new EventListenerManager();
@@ -80,6 +96,29 @@ export class XbCellElement extends HTMLElement {
             this.#codemirror?.update_from_settings();
         }
     }
+
+
+    // === SHOWING ===
+
+    /** control whether or not this element is shown when view is set to "presentation"
+     * @param {Boolean} new_state
+     */
+    show_in_presentation(new_state: boolean = true): void {
+        if (new_state) {
+            this.classList.add(this.CLASS.css_class__show_in_presentation);
+        } else {
+            this.classList.remove(this.CLASS.css_class__show_in_presentation);
+        }
+    }
+
+    /** @return (Boolean) whether or not this element is shown when view is set to "presentation".
+     */
+    get shown_in_presentation (){ return this.classList.contains(this.CLASS.css_class__show_in_presentation); }
+
+    /** @return (Boolean) whether or not this element is currently showing.
+     * Note that "showing" does not necessarily mean visible; the cell may be scrolled out of the viewport.
+     */
+    get showing (){ return (this.xb && (!this.xb.in_presentation_view || this.shown_in_presentation)); }
 
 
     // === TEXT CONTENT ===
@@ -217,7 +256,7 @@ export class XbCellElement extends HTMLElement {
 
     // === DOM ===
 
-    get_output_element_selector() { return `[data-source-element="${this.id}"]`; }
+    get_output_element_selector() { return `[${OutputContextLike.attribute__data_source_element}="${this.id}"]`; }
 
     /** reset the cell, removing all associated output elements
      */
@@ -264,7 +303,7 @@ export class XbCellElement extends HTMLElement {
         ];
         //!!! attributes values' containing " character are incorrectly translated to \"
         for (const name of this.getAttributeNames()) {
-            if (name !== 'data-active' || include_active_cell_setting) {
+            if (name !== this.CLASS.attribute__active || include_active_cell_setting) {
                 const value = this.getAttribute(name);
                 if (!value) {
                     open_tag_segments.push(name);

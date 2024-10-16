@@ -32,7 +32,7 @@ export class TextRenderer extends TextBasedRenderer {
         const span = ocx.create_child({
             tag: 'span',
             attrs: {
-                'data-source-media-type': this.media_type,
+                [OutputContextLike.attribute__data_source_media_type]: this.media_type,
                 class: 'plain-text',  // see 'src/style.css'
             },
             style,

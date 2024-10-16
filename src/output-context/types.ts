@@ -60,9 +60,16 @@ import {
 // This is a recognizable error representing a stopped condition
 export class StoppedError extends Error {};
 
+const css_class__xb_cell_output         = 'xb-cell-output';
+const attribute__data_source_element    = 'data-source-element';
+const attribute__data_source_media_type = 'data-source-media-type';
 
 export abstract class OutputContextLike extends ActivityManager {
     get CLASS (){ return this.constructor as typeof OutputContextLike; }
+
+    static get css_class__xb_cell_output         (){ return css_class__xb_cell_output; }
+    static get attribute__data_source_element    (){ return attribute__data_source_element; }
+    static get attribute__data_source_media_type (){ return attribute__data_source_media_type; }
 
     constructor() {
         super();  // ActivityManager base class; multiple_stops = false
@@ -132,9 +139,9 @@ export abstract class OutputContextLike extends ActivityManager {
             parent: cell.parentElement,
             before: cell.nextSibling,
             attrs: {
-                class: 'xb-cell-output',
-                'data-source-element':    cell.id,
-                'data-source-media-type': source_media_type,
+                class:                                    this.css_class__xb_cell_output,
+                [this.attribute__data_source_element]:    cell.id,
+                [this.attribute__data_source_media_type]: source_media_type,
             },
         }) as HTMLOutputElement;
     }

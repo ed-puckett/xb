@@ -25,8 +25,8 @@ export class CanvasImageRenderer extends ApplicationBasedRenderer<CanvasImageRen
         if (typeof (options as any).tag !== 'undefined') {
             console.warn('overriding options.tag value', (options as any).tag);
         }
-        if (typeof (options as any).attrs?.['data-source-media-type'] !== 'undefined') {
-            console.warn('overriding options.attrs["data-source-media-type"] value', (options as any).attrs['data-source-media-type']);
+        if (typeof (options as any).attrs?.[OutputContextLike.attribute__data_source_media_type] !== 'undefined') {
+            console.warn(`overriding options.attrs["${OutputContextLike.attribute__data_source_media_type}"] value`, (options as any).attrs[OutputContextLike.attribute__data_source_media_type]);
         }
         if (typeof (options as any).attrs?.['src'] !== 'undefined') {
             console.warn('overriding options.src value', (options as any).attrs.src);
@@ -37,7 +37,7 @@ export class CanvasImageRenderer extends ApplicationBasedRenderer<CanvasImageRen
             tag: 'img',
             attrs: {
                 ...((options as any).attrs ?? {}),
-                'data-source-media-type': this.media_type,
+                [OutputContextLike.attribute__data_source_media_type]: this.media_type,
                 // "src" set below
             },
         };

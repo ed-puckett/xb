@@ -51,7 +51,7 @@ export class PlotlyRenderer extends ApplicationBasedRenderer<PlotlyRendererValue
 
         const parent = ocx.create_child({
             attrs: {
-                'data-source-media-type': this.media_type,
+                [OutputContextLike.attribute__data_source_media_type]: this.media_type,
             },
         });
         const output_element = ocx.CLASS.create_element({

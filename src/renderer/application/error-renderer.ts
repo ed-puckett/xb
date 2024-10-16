@@ -65,7 +65,7 @@ console.log(error_object);//!!! for debugging from console
             tag: 'pre',
             attrs: {
                 class: this.error_element_class,
-                'data-source-media-type': this.media_type,
+                [OutputContextLike.attribute__data_source_media_type]: this.media_type,
             },
             style,
         }) as HTMLElement;

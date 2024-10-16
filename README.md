@@ -27,4 +27,4 @@ In addition, *x*b can host executable content in a Web-based sandbox, and gives 
 
 ---
 
-## NOTE: this information is obsolete and needs to be rewritten.
+***(sorry, this document is a barely-started work in progress)***

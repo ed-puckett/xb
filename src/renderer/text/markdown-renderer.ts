@@ -100,7 +100,7 @@ export class MarkdownRenderer extends TextBasedRenderer {
         const parent = ocx.create_child({
             tag: inline ? 'span' : 'div',
             attrs: {
-                'data-source-media-type': this.media_type,
+                [OutputContextLike.attribute__data_source_media_type]: this.media_type,
             },
             style,
         });

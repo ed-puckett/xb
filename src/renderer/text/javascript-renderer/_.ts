@@ -56,6 +56,10 @@ const AsyncFunction          = Object.getPrototypeOf(async function () {}).const
 const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () {}).constructor;
 
 import {
+    XbCellElement,
+} from 'src/xb-cell-element/_';
+
+import {
     ApplicationBasedRenderer,
     TextBasedRenderer,
 } from 'src/renderer/renderer';
@@ -138,7 +142,7 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             eval_ocx = ocx.create_child_ocx({
                 tag: inline ? 'span' : 'div',
                 attrs: {
-                    'data-source-media-type': this.media_type,
+                    [OutputContextLike.attribute__data_source_media_type]: this.media_type,
                 },
                 style,
             });
@@ -205,6 +209,9 @@ export class JavaScriptRenderer extends TextBasedRenderer {
     }
 
     async #create_eval_environment(eval_context: object, ocx: OutputContextLike, source_code: string) {
+        const cell_id = ocx.element.closest(`[${OutputContextLike.attribute__data_source_element}]`)?.getAttribute(OutputContextLike.attribute__data_source_element);
+        const cell = cell_id ? (document.getElementById(cell_id) ?? undefined) : undefined;
+
         const d3 = await load_d3();
 
         function is_stopped() {
@@ -270,8 +277,11 @@ export class JavaScriptRenderer extends TextBasedRenderer {
         }
 
         const eval_environment = {
+            env_keys: [] as string[],  // updated below to be an array of all the keys in eval_environment
+
             ocx,
             source_code,  // this evaluation's source code
+            cell,         // this evaluation's associated cell or undefined if no associated cell
 
             // Renderer, etc classes
             TextBasedRenderer,
@@ -321,6 +331,8 @@ export class JavaScriptRenderer extends TextBasedRenderer {
             canvas_image:    ocx.canvas_image.bind(ocx),
             canvas_tools,
         };
+
+        eval_environment.env_keys = Object.keys(eval_environment);
 
         return eval_environment;
     }

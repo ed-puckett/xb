@@ -3,6 +3,7 @@ const current_script_url = import.meta.url;  // save for later
 import {
     show_initialization_failed,
     save_serializer,
+    cell_view_attribute_name,
     cell_view_values_default,
     get_auto_eval,
     bootstrap_script_src_alternatives_default,
@@ -226,9 +227,11 @@ export class XbManager {
         return el;
     }
 
-    get cell_view (){ return document.documentElement.getAttribute('data-cell-view') ?? cell_view_values_default; }
+    get cell_view (){ return document.documentElement.getAttribute(cell_view_attribute_name) ?? cell_view_values_default; }
 
-    get interactive (){ return (this.cell_view !== 'presentation'); }
+    get in_presentation_view (){ return (this.cell_view === 'presentation'); }
+
+    get interactive (){ return (!this.in_presentation_view || this.active_cell?.shown_in_presentation); }
 
     get cell_parent (){ return this.main_element; }
 
@@ -387,9 +390,9 @@ export class XbManager {
 
     #set_initial_active_cell() {
         const active_cell = (
-            document.querySelector(`${XbCellElement.custom_element_name}[data-active]`) ??  // cell currently set as active
-            document.querySelector(`${XbCellElement.custom_element_name}`)              ??  // first cell
-            this.create_cell()                                                              // new cell
+            document.querySelector(`${XbCellElement.custom_element_name}[${XbCellElement.attribute__active}]`) ??  // cell currently set as active
+            document.querySelector(`${XbCellElement.custom_element_name}`)                                     ??  // first cell
+            this.create_cell()                                                                                     // new cell
         ) as XbCellElement;
         if (active_cell.xb !== this) {
             console.error('unexpected: active_cell has a different xb');
@@ -750,8 +753,10 @@ export class XbManager {
         //!!! review this !!!
         const menu = this.#menu;
         if (menu) {
+            const presentation    = this.in_presentation_view;
             const interactive     = this.interactive;
-            const cells           = this.get_cells();
+            const all_cells       = this.get_cells();
+            const cells           = all_cells.filter(cell => cell.showing);
             const active_cell     = this.active_cell;
             const active_index    = active_cell ? cells.indexOf(active_cell) : -1;
             const editable        = this.editable;
@@ -760,13 +765,13 @@ export class XbManager {
             const has_save_handle = !!this.#file_handle;
             const is_neutral      = this.is_neutral();
 
-            menu.set_menu_state('clear-all',             { enabled: interactive && editable });
+            menu.set_menu_state('clear-all',             { enabled: !presentation && editable });
 
             menu.set_menu_state('save',                  { enabled: !is_neutral && has_save_handle });
             // no update to command 'save-as'
             // no update to command 'export'
 
-            menu.set_menu_state('toggle-auto-eval',      { checked: get_auto_eval(), enabled: interactive });
+            menu.set_menu_state('toggle-auto-eval',      { checked: get_auto_eval(), enabled: !presentation });
 
             // no update to command 'settings'
 
@@ -776,19 +781,20 @@ export class XbManager {
             menu.set_menu_state('eval-all',              { enabled: interactive && editable && !!active_cell });
 
             menu.set_menu_state('stop',                  { enabled: active_cell?.can_stop });
-            menu.set_menu_state('stop-all',              { enabled: cells.some(cell => cell.can_stop) });
+            menu.set_menu_state('stop-all',              { enabled: all_cells.some(cell => cell.can_stop) });
 
-            menu.set_menu_state('reset',                 { enabled: interactive && editable });
-            menu.set_menu_state('reset-all',             { enabled: interactive && editable });
+            menu.set_menu_state('reset',                 { enabled: interactive   && editable });
+            menu.set_menu_state('reset-all',             { enabled: !presentation && editable });
 
             menu.set_menu_state('focus-up',              { enabled: interactive && !!active_cell && active_index > 0 });
             menu.set_menu_state('focus-down',            { enabled: interactive && !!active_cell && active_index < cells.length-1 });
 
-            menu.set_menu_state('move-up',               { enabled: interactive && !!active_cell && active_index > 0 });
-            menu.set_menu_state('move-down',             { enabled: interactive && !!active_cell && active_index < cells.length-1 });
-            menu.set_menu_state('add-before',            { enabled: interactive && editable && !!active_cell });
-            menu.set_menu_state('add-after',             { enabled: interactive && editable && !!active_cell });
-            menu.set_menu_state('delete',                { enabled: interactive && editable && !!active_cell });
+            menu.set_menu_state('move-up',               { enabled: !presentation && !!active_cell && active_index > 0 });
+            menu.set_menu_state('move-down',             { enabled: !presentation && !!active_cell && active_index < cells.length-1 });
+            menu.set_menu_state('add-before',            { enabled: !presentation && editable && !!active_cell });
+            menu.set_menu_state('add-after',             { enabled: !presentation && editable && !!active_cell });
+            menu.set_menu_state('duplicate',             { enabled: !presentation && editable && !!active_cell });
+            menu.set_menu_state('delete',                { enabled: !presentation && editable && !!active_cell });
 
             menu.set_menu_state('set-type-plain',        { checked: (cell_type === 'plain'),      enabled: interactive });
             menu.set_menu_state('set-type-markdown',     { checked: (cell_type === 'markdown'),   enabled: interactive });
@@ -855,19 +861,23 @@ export class XbManager {
         return [ ...document.getElementsByTagName(XbCellElement.custom_element_name) ] as XbCellElement[];
     }
 
-    /** return the cell that is adjacent to the given cell, either forward (or
-     *  alternately backward) from the reference.
+    /** Return the cell that is adjacent to the given cell, either forward (or
+     * alternately backward) from the reference.  If include_non_shown is false,
+     * then only currently shown cells are considered.
      * @param {undefined|XbCellElement} reference (default: this.active_cell)
      * @param {Boolean} forward
+     * @param {Boolean} include_non_shown
      * @return {undefined|XbCellElement} the adjacent cell, or undefined if
      *     reference does not exist in the document or if there is
      *     no such adjacent cell.
      */
-    adjacent_cell(reference?: XbCellElement, forward: boolean = false): undefined|XbCellElement {
+    adjacent_cell(reference?: XbCellElement, forward: boolean = false, include_non_shown: boolean = false): undefined|XbCellElement {
         if (reference && reference.xb !== this) {
             throw new Error('unexpected: reference cell has a different xb');
         } else {
-            const cells = this.get_cells();
+            const cells = include_non_shown
+                ? this.get_cells()
+                : this.get_cells().filter(cell => cell.showing);
             const pos = reference ? cells.indexOf(reference) : -1;
             if (pos === -1) {
                 return undefined;
