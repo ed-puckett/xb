@@ -11026,7 +11026,7 @@ async function initialize_document() {
         // validate html[data-cell-view]
         const cell_view = document.documentElement.getAttribute(cell_view_attribute_name);
         if (cell_view && !_valid_cell_view_values.includes(cell_view)) {
-            throw new Error(`<html> attribute data-cell-view must be unset or one of: "${_valid_cell_view_values.join('", "')}"`);
+            throw new Error(`<html> attribute ${cell_view_attribute_name} must be unset or one of: "${_valid_cell_view_values.join('", "')}"`);
         }
         // establish head element if not already present
         if (!document.head) {
@@ -11538,8 +11538,14 @@ lib_sys_sprintf__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.t
 class StoppedError extends Error {
 }
 ;
+const css_class__xb_cell_output = 'xb-cell-output';
+const attribute__data_source_element = 'data-source-element';
+const attribute__data_source_media_type = 'data-source-media-type';
 class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODULE_2__/* .ActivityManager */ .B {
     get CLASS() { return this.constructor; }
+    static get css_class__xb_cell_output() { return css_class__xb_cell_output; }
+    static get attribute__data_source_element() { return attribute__data_source_element; }
+    static get attribute__data_source_media_type() { return attribute__data_source_media_type; }
     constructor() {
         super(); // ActivityManager base class; multiple_stops = false
     }
@@ -11592,9 +11598,9 @@ class OutputContextLike extends lib_sys_activity_manager__WEBPACK_IMPORTED_MODUL
             parent: cell.parentElement,
             before: cell.nextSibling,
             attrs: {
-                class: 'xb-cell-output',
-                'data-source-element': cell.id,
-                'data-source-media-type': source_media_type,
+                class: this.css_class__xb_cell_output,
+                [this.attribute__data_source_element]: cell.id,
+                [this.attribute__data_source_media_type]: source_media_type,
             },
         });
     }
@@ -11839,12 +11845,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3363);
 /* harmony import */ var _application_error_renderer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3161);
 /* harmony import */ var _application_image_data_renderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4863);
-/* harmony import */ var _application_graphviz_renderer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(907);
+/* harmony import */ var _application_graphviz_renderer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1560);
 /* harmony import */ var _application_plotly_renderer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(39);
 /* harmony import */ var _application_canvas_image_renderer__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7895);
 /* harmony import */ var _factories__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1024);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__]);
-([_text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_text_text_renderer__WEBPACK_IMPORTED_MODULE_1__, _text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, _application_error_renderer__WEBPACK_IMPORTED_MODULE_5__, _application_image_data_renderer__WEBPACK_IMPORTED_MODULE_6__, _application_graphviz_renderer__WEBPACK_IMPORTED_MODULE_7__, _application_plotly_renderer__WEBPACK_IMPORTED_MODULE_8__, _application_canvas_image_renderer__WEBPACK_IMPORTED_MODULE_9__]);
+([_text_text_renderer__WEBPACK_IMPORTED_MODULE_1__, _text_markdown_renderer__WEBPACK_IMPORTED_MODULE_2__, _text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, _text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, _application_error_renderer__WEBPACK_IMPORTED_MODULE_5__, _application_image_data_renderer__WEBPACK_IMPORTED_MODULE_6__, _application_graphviz_renderer__WEBPACK_IMPORTED_MODULE_7__, _application_plotly_renderer__WEBPACK_IMPORTED_MODULE_8__, _application_canvas_image_renderer__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // === RE-EXPORTS ===
 
 
@@ -11864,12 +11870,17 @@ __webpack_async_result__();
 /***/ }),
 
 /***/ 7895:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   D: () => (/* binding */ CanvasImageRenderer)
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9799);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_1__]);
+src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 class CanvasImageRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .rK {
     static get type() { return 'canvas-image'; }
@@ -11881,8 +11892,8 @@ class CanvasImageRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE
         if (typeof options.tag !== 'undefined') {
             console.warn('overriding options.tag value', options.tag);
         }
-        if (typeof options.attrs?.['data-source-media-type'] !== 'undefined') {
-            console.warn('overriding options.attrs["data-source-media-type"] value', options.attrs['data-source-media-type']);
+        if (typeof options.attrs?.[src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type] !== 'undefined') {
+            console.warn(`overriding options.attrs["${src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type}"] value`, options.attrs[src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type]);
         }
         if (typeof options.attrs?.['src'] !== 'undefined') {
             console.warn('overriding options.src value', options.attrs.src);
@@ -11892,7 +11903,7 @@ class CanvasImageRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE
             tag: 'img',
             attrs: {
                 ...(options.attrs ?? {}),
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
                 // "src" set below
             },
         };
@@ -11915,6 +11926,8 @@ class CanvasImageRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -11942,13 +11955,18 @@ async function load_d3() {
 /***/ }),
 
 /***/ 3161:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   i: () => (/* binding */ ErrorRenderer)
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3854);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9799);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3854);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_1__]);
+src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 
 class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .rK {
@@ -11987,12 +12005,12 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
         const text = text_segments.join('\n');
         // create the parent element using the dom-tools interface, not the ocx,
         // to avoid triggering an abort_if_stopped error.
-        const parent = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .create_element */ .Wh)({
+        const parent = (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .create_element */ .Wh)({
             parent: ocx.element,
             tag: 'pre',
             attrs: {
                 class: this.error_element_class,
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
             },
             style,
         });
@@ -12001,38 +12019,87 @@ class ErrorRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/*
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
-/***/ 907:
+/***/ 1560:
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   B: () => (/* binding */ GraphvizRenderer)
+/* harmony export */ });
+/* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9799);
+/* harmony import */ var _graphviz__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7474);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_1__]);
+src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
+
+
+class GraphvizRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .rK {
+    static get type() { return 'graphviz'; }
+    async _render(ocx, graphviz_config, options) {
+        const style = options?.style;
+        const element = ocx.create_child({
+            attrs: {
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
+            },
+            style,
+            set_id: true, // required for selector below
+        });
+        const element_selector = `#${element.id}`;
+        const dot_stmts = [];
+        if (graphviz_config?.node_config) {
+            dot_stmts.push(`node ${graphviz_config.node_config}`);
+        }
+        for (const node_spec of (graphviz_config?.nodes ?? [])) {
+            if (typeof node_spec === 'string') {
+                const name = node_spec;
+                dot_stmts.push(name);
+            }
+            else {
+                const [name, node_options] = node_spec;
+                dot_stmts.push(`${name} [${node_options}]`);
+            }
+        }
+        for (const [from, to, edge_options] of (graphviz_config?.edges ?? [])) {
+            dot_stmts.push(`${from}->${to}${edge_options ? `[${edge_options}]` : ''}`);
+        }
+        const dot = `digraph { ${dot_stmts.join(';')} }`;
+        // create and run the renderer
+        await (0,_graphviz__WEBPACK_IMPORTED_MODULE_2__/* .render */ .X)(element_selector, dot, {});
+        return element;
+    }
+}
+
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 7474:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  B: () => (/* binding */ GraphvizRenderer)
-});
-
-// EXTERNAL MODULE: ./src/renderer/renderer.ts
-var renderer = __webpack_require__(7007);
-// EXTERNAL MODULE: ./src/renderer/application/d3.ts
-var application_d3 = __webpack_require__(5462);
-// EXTERNAL MODULE: ./lib/ui/dom-tools.ts
-var dom_tools = __webpack_require__(3854);
-// EXTERNAL MODULE: ./lib/sys/assets-server-url.ts
-var assets_server_url = __webpack_require__(9432);
-;// CONCATENATED MODULE: ./src/renderer/application/graphviz.ts
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   X: () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var _d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5462);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3854);
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9432);
 const current_script_url = "file:///home/ed/code/xb/src/renderer/application/graphviz.ts"; // save for later
 
 
 
 let loaded = false;
 async function load_modules() {
-    const d3 = await (0,application_d3/* load_d3 */.l)();
+    const d3 = await (0,_d3__WEBPACK_IMPORTED_MODULE_0__/* .load_d3 */ .l)();
     if (!loaded) {
-        const server_url = (0,assets_server_url/* assets_server_url */.U)(current_script_url);
-        await (0,dom_tools/* load_script */.du)(document.head, new URL('../../../dist/graphviz.umd.js', server_url));
-        await (0,dom_tools/* load_script */.du)(document.head, new URL('../../../dist/d3-graphviz.min.js', server_url));
+        const server_url = (0,lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_2__/* .assets_server_url */ .U)(current_script_url);
+        await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .load_script */ .du)(document.head, new URL('../../../dist/graphviz.umd.js', server_url));
+        await (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .load_script */ .du)(document.head, new URL('../../../dist/d3-graphviz.min.js', server_url));
         loaded = true;
     }
     return d3;
@@ -12071,55 +12138,21 @@ async function render(element_selector, dot, options) {
     });
 }
 
-;// CONCATENATED MODULE: ./src/renderer/application/graphviz-renderer.ts
-
-
-class GraphvizRenderer extends renderer/* ApplicationBasedRenderer */.rK {
-    static get type() { return 'graphviz'; }
-    async _render(ocx, graphviz_config, options) {
-        const style = options?.style;
-        const element = ocx.create_child({
-            attrs: {
-                'data-source-media-type': this.media_type,
-            },
-            style,
-            set_id: true, // required for selector below
-        });
-        const element_selector = `#${element.id}`;
-        const dot_stmts = [];
-        if (graphviz_config?.node_config) {
-            dot_stmts.push(`node ${graphviz_config.node_config}`);
-        }
-        for (const node_spec of (graphviz_config?.nodes ?? [])) {
-            if (typeof node_spec === 'string') {
-                const name = node_spec;
-                dot_stmts.push(name);
-            }
-            else {
-                const [name, node_options] = node_spec;
-                dot_stmts.push(`${name} [${node_options}]`);
-            }
-        }
-        for (const [from, to, edge_options] of (graphviz_config?.edges ?? [])) {
-            dot_stmts.push(`${from}->${to}${edge_options ? `[${edge_options}]` : ''}`);
-        }
-        const dot = `digraph { ${dot_stmts.join(';')} }`;
-        // create and run the renderer
-        await render(element_selector, dot, {});
-        return element;
-    }
-}
-
 
 /***/ }),
 
 /***/ 4863:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   b: () => (/* binding */ ImageDataRenderer)
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9799);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_1__]);
+src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 class ImageDataRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .rK {
     static get type() { return 'image-data'; }
@@ -12127,7 +12160,7 @@ class ImageDataRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0
         const style = options?.style;
         const parent = ocx.create_child({
             attrs: {
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
             },
         });
         const canvas = ocx.CLASS.create_element({
@@ -12146,17 +12179,24 @@ class ImageDataRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
 /***/ 39:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   e: () => (/* binding */ PlotlyRenderer)
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
-/* harmony import */ var _plotly__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4723);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9799);
+/* harmony import */ var _plotly__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4723);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_1__]);
+src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 
 class PlotlyRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .ApplicationBasedRenderer */ .rK {
@@ -12190,19 +12230,21 @@ class PlotlyRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/
         config.displayModeBar = false; // remove icons/links from top-right of plot
         const parent = ocx.create_child({
             attrs: {
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
             },
         });
         const output_element = ocx.CLASS.create_element({
             parent,
             style,
         });
-        const Plotly = await (0,_plotly__WEBPACK_IMPORTED_MODULE_1__/* .load_Plotly */ .O)();
+        const Plotly = await (0,_plotly__WEBPACK_IMPORTED_MODULE_2__/* .load_Plotly */ .O)();
         await Plotly.newPlot(output_element, { data, layout, config, frames }); // render to the output_element
         return parent;
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -12420,14 +12462,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7007);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1024);
 /* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3161);
-/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8067);
-/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5462);
-/* harmony import */ var src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4723);
-/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1576);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3428);
-/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(1688);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_eval_worker___WEBPACK_IMPORTED_MODULE_4__]);
-_eval_worker___WEBPACK_IMPORTED_MODULE_4__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9799);
+/* harmony import */ var _eval_worker___WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8067);
+/* harmony import */ var src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5462);
+/* harmony import */ var src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(4723);
+/* harmony import */ var lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1576);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(3428);
+/* harmony import */ var lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1688);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__, src_output_context_types__WEBPACK_IMPORTED_MODULE_4__, _eval_worker___WEBPACK_IMPORTED_MODULE_5__]);
+([src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_3__, src_output_context_types__WEBPACK_IMPORTED_MODULE_4__, _eval_worker___WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = "file:///home/ed/code/xb/src/renderer/text/javascript-renderer/_.ts"; // save for later
 
 const lib_dir_path = '../../../lib/';
@@ -12485,6 +12528,7 @@ const AsyncGeneratorFunction = Object.getPrototypeOf(async function* () { }).con
 
 
 
+
 class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .m9 {
     static get type() { return 'javascript'; }
     static {
@@ -12508,7 +12552,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             eval_ocx = ocx.create_child_ocx({
                 tag: inline ? 'span' : 'div',
                 attrs: {
-                    'data-source-media-type': this.media_type,
+                    [src_output_context_types__WEBPACK_IMPORTED_MODULE_4__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
                 },
                 style,
             });
@@ -12565,7 +12609,9 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
         return eval_ocx.element;
     }
     async #create_eval_environment(eval_context, ocx, source_code) {
-        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_5__/* .load_d3 */ .l)();
+        const cell_id = ocx.element.closest(`[${src_output_context_types__WEBPACK_IMPORTED_MODULE_4__/* .OutputContextLike */ .s.attribute__data_source_element}]`)?.getAttribute(src_output_context_types__WEBPACK_IMPORTED_MODULE_4__/* .OutputContextLike */ .s.attribute__data_source_element);
+        const cell = cell_id ? (document.getElementById(cell_id) ?? undefined) : undefined;
+        const d3 = await (0,src_renderer_application_d3__WEBPACK_IMPORTED_MODULE_6__/* .load_d3 */ .l)();
         function is_stopped() {
             return ocx.stopped;
         }
@@ -12607,7 +12653,7 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             ancestor_ocx.stop();
         }
         async function create_worker(options) {
-            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_4__/* .EvalWorker */ .V(options); // is an Activity; multiple_stops = false
+            const worker = new _eval_worker___WEBPACK_IMPORTED_MODULE_5__/* .EvalWorker */ .V(options); // is an Activity; multiple_stops = false
             ocx.manage_activity(worker);
             return worker;
         }
@@ -12625,15 +12671,17 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             return objects;
         }
         const eval_environment = {
+            env_keys: [], // updated below to be an array of all the keys in eval_environment
             ocx,
             source_code, // this evaluation's source code
+            cell, // this evaluation's associated cell or undefined if no associated cell
             // Renderer, etc classes
             TextBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .TextBasedRenderer */ .m9,
             ApplicationBasedRenderer: src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1__/* .ApplicationBasedRenderer */ .rK,
             d3, // for use with Plotly
-            load_Plotly: src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_6__/* .load_Plotly */ .O,
-            load_Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_7__/* .load_Algebrite */ .B,
-            rxjs: rxjs__WEBPACK_IMPORTED_MODULE_8__,
+            load_Plotly: src_renderer_application_plotly__WEBPACK_IMPORTED_MODULE_7__/* .load_Plotly */ .O,
+            load_Algebrite: lib_sys_algebrite__WEBPACK_IMPORTED_MODULE_8__/* .load_Algebrite */ .B,
+            rxjs: rxjs__WEBPACK_IMPORTED_MODULE_9__,
             // utility functions defined above
             is_stopped, // no abort_if_stopped()....
             keepalive: ocx.AIS(keepalive),
@@ -12666,8 +12714,9 @@ class JavaScriptRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_
             graphviz: ocx.graphviz.bind(ocx),
             plotly: ocx.plotly.bind(ocx),
             canvas_image: ocx.canvas_image.bind(ocx),
-            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_9__,
+            canvas_tools: lib_ui_canvas_tools__WEBPACK_IMPORTED_MODULE_10__,
         };
+        eval_environment.env_keys = Object.keys(eval_environment);
         return eval_environment;
     }
 }
@@ -31525,10 +31574,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3161);
 /* harmony import */ var src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6473);
 /* harmony import */ var src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3363);
-/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8150);
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3141);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__]);
-([src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, _marked__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9799);
+/* harmony import */ var _marked__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8150);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3141);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__, src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, src_output_context_types__WEBPACK_IMPORTED_MODULE_5__, _marked__WEBPACK_IMPORTED_MODULE_6__]);
+([src_renderer_application_error_renderer__WEBPACK_IMPORTED_MODULE_2__, src_renderer_text_tex_renderer__WEBPACK_IMPORTED_MODULE_3__, src_renderer_text_javascript_renderer___WEBPACK_IMPORTED_MODULE_4__, src_output_context_types__WEBPACK_IMPORTED_MODULE_5__, _marked__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -31574,7 +31625,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
         const parent = ocx.create_child({
             tag: inline ? 'span' : 'div',
             attrs: {
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_5__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
             },
             style,
         });
@@ -31600,7 +31651,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
                             }
                             const markup_segments = [];
                             function add_segment(renderer_factory, text_to_render, css_class) {
-                                const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__/* .generate_object_id */ .Q7)();
+                                const output_element_id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_7__/* .generate_object_id */ .Q7)();
                                 deferred_evaluations.push({
                                     output_element_id,
                                     text: text_to_render,
@@ -31630,7 +31681,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
                 }
             }
         };
-        const markup = _marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .x.parse(markdown, marked_options); // using extensions, see below
+        const markup = _marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .x.parse(markdown, marked_options); // using extensions, see below
         parent.innerHTML = markup;
         // now run the deferred_evaluations
         // by setting up the output elements for each of deferred_evaluations, we
@@ -31658,7 +31709,7 @@ class MarkdownRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_1_
         return parent;
     }
 }
-_marked__WEBPACK_IMPORTED_MODULE_5__/* .marked */ .x.use({
+_marked__WEBPACK_IMPORTED_MODULE_6__/* .marked */ .x.use({
     extensions: [
         {
             name: extension_name__inline_tex,
@@ -31775,10 +31826,12 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1024);
-/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3593);
-/* harmony import */ var _katex___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1404);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_settings___WEBPACK_IMPORTED_MODULE_2__]);
-src_settings___WEBPACK_IMPORTED_MODULE_2__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9799);
+/* harmony import */ var src_settings___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3593);
+/* harmony import */ var _katex___WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1404);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_2__, src_settings___WEBPACK_IMPORTED_MODULE_3__]);
+([src_output_context_types__WEBPACK_IMPORTED_MODULE_2__, src_settings___WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -31806,7 +31859,7 @@ class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .
         });
         const parent = ocx.create_child({
             attrs: {
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_2__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
             },
             style,
         });
@@ -31814,7 +31867,7 @@ class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .
         return parent;
     }
     static render_to_string(tex, global_state, katex_options) {
-        const { flush_left, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_2__/* .get_settings */ .TJ)().formatting_options;
+        const { flush_left, } = (0,src_settings___WEBPACK_IMPORTED_MODULE_3__/* .get_settings */ .TJ)().formatting_options;
         //!!! fix usage of katex_options
         // this function encapsulates how the "macros" options is gotten from global_state
         katex_options = {
@@ -31823,7 +31876,7 @@ class TeXRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .
             ...(katex_options ?? {}),
         };
         katex_options.macros ??= (global_state[this.type] ??= {}); // for persistent \gdef macros
-        return _katex___WEBPACK_IMPORTED_MODULE_3__/* .katex */ .Y.renderToString(tex, katex_options);
+        return _katex___WEBPACK_IMPORTED_MODULE_4__/* .katex */ .Y.renderToString(tex, katex_options);
     }
 }
 
@@ -31833,13 +31886,18 @@ __webpack_async_result__();
 /***/ }),
 
 /***/ 2221:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   J: () => (/* binding */ TextRenderer)
 /* harmony export */ });
 /* harmony import */ var src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7007);
 /* harmony import */ var src_renderer_factories__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1024);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9799);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_output_context_types__WEBPACK_IMPORTED_MODULE_2__]);
+src_output_context_types__WEBPACK_IMPORTED_MODULE_2__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
+
 
 
 class TextRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* .TextBasedRenderer */ .m9 {
@@ -31853,7 +31911,7 @@ class TextRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* 
         const span = ocx.create_child({
             tag: 'span',
             attrs: {
-                'data-source-media-type': this.media_type,
+                [src_output_context_types__WEBPACK_IMPORTED_MODULE_2__/* .OutputContextLike */ .s.attribute__data_source_media_type]: this.media_type,
                 class: 'plain-text', // see 'src/style.css'
             },
             style,
@@ -31863,6 +31921,8 @@ class TextRenderer extends src_renderer_renderer__WEBPACK_IMPORTED_MODULE_0__/* 
     }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }),
 
@@ -32852,15 +32912,17 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony export */ });
 /* unused harmony export load_stylesheet */
 /* harmony import */ var src_xb_manager___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1692);
-/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3854);
-/* harmony import */ var lib_sys_string_tools__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(1496);
-/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3178);
-/* harmony import */ var _codemirror__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3433);
-/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3141);
-/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9432);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager___WEBPACK_IMPORTED_MODULE_0__, _codemirror__WEBPACK_IMPORTED_MODULE_2__]);
-([src_xb_manager___WEBPACK_IMPORTED_MODULE_0__, _codemirror__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var src_output_context_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9799);
+/* harmony import */ var lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3854);
+/* harmony import */ var lib_sys_string_tools__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(1496);
+/* harmony import */ var lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3178);
+/* harmony import */ var _codemirror__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3433);
+/* harmony import */ var lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3141);
+/* harmony import */ var lib_sys_assets_server_url__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9432);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([src_xb_manager___WEBPACK_IMPORTED_MODULE_0__, src_output_context_types__WEBPACK_IMPORTED_MODULE_1__, _codemirror__WEBPACK_IMPORTED_MODULE_3__]);
+([src_xb_manager___WEBPACK_IMPORTED_MODULE_0__, src_output_context_types__WEBPACK_IMPORTED_MODULE_1__, _codemirror__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 const current_script_url = (/* unused pure expression or super */ null && ("file:///home/ed/code/xb/src/xb-cell-element/_.ts")); // save for later
+
 
 
 
@@ -32877,12 +32939,18 @@ async function load_stylesheet() {
  */
 class XbCellElement extends HTMLElement {
     get CLASS() { return this.constructor; }
-    static custom_element_name = 'xb-cell';
-    static attribute__active = 'data-active';
+    static #custom_element_name = 'xb-cell';
+    static get custom_element_name() { return this.#custom_element_name; }
+    static #css_class__show_in_presentation = 'show-in-presentation';
+    static get css_class__show_in_presentation() { return this.#css_class__show_in_presentation; }
+    static #attribute__active = 'data-active';
+    static get attribute__active() { return this.#attribute__active; }
     static #attribute__type = 'data-type';
-    static default_type = 'markdown';
+    static get attribute__type() { return this.#attribute__type; }
+    static #default_type = 'markdown';
+    static get default_type() { return this.#default_type; }
     #codemirror = undefined;
-    #event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_4__/* .EventListenerManager */ .W();
+    #event_listener_manager = new lib_sys_event_listener_manager__WEBPACK_IMPORTED_MODULE_5__/* .EventListenerManager */ .W();
     #xb = undefined;
     get xb() { return this.#xb; }
     /** _set_xb() must be called prior this.get_text() or this.set_text() being called.
@@ -32903,6 +32971,25 @@ class XbCellElement extends HTMLElement {
             this.#codemirror?.update_from_settings();
         }
     }
+    // === SHOWING ===
+    /** control whether or not this element is shown when view is set to "presentation"
+     * @param {Boolean} new_state
+     */
+    show_in_presentation(new_state = true) {
+        if (new_state) {
+            this.classList.add(this.CLASS.css_class__show_in_presentation);
+        }
+        else {
+            this.classList.remove(this.CLASS.css_class__show_in_presentation);
+        }
+    }
+    /** @return (Boolean) whether or not this element is shown when view is set to "presentation".
+     */
+    get shown_in_presentation() { return this.classList.contains(this.CLASS.css_class__show_in_presentation); }
+    /** @return (Boolean) whether or not this element is currently showing.
+     * Note that "showing" does not necessarily mean visible; the cell may be scrolled out of the viewport.
+     */
+    get showing() { return (this.xb && (!this.xb.in_presentation_view || this.shown_in_presentation)); }
     // === TEXT CONTENT ===
     get_text() {
         if (!(this.#xb instanceof src_xb_manager___WEBPACK_IMPORTED_MODULE_0__/* .XbManager */ .U)) {
@@ -32931,7 +33018,7 @@ class XbCellElement extends HTMLElement {
     #has_text_container() { return !!this.#codemirror; }
     #establish_editable_text_container() {
         if (!this.#has_text_container()) {
-            this.#codemirror = _codemirror__WEBPACK_IMPORTED_MODULE_2__/* .CodemirrorInterface */ .g.create(this);
+            this.#codemirror = _codemirror__WEBPACK_IMPORTED_MODULE_3__/* .CodemirrorInterface */ .g.create(this);
         }
         // this.#is_neutral_without_text_container remains the same
     }
@@ -32940,7 +33027,7 @@ class XbCellElement extends HTMLElement {
             const text = this.get_text();
             this.#is_neutral_without_text_container &&= this.#codemirror.is_neutral();
             this.#codemirror = undefined;
-            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_1__/* .clear_element */ .ho)(this); // remove text_container element, etc
+            (0,lib_ui_dom_tools__WEBPACK_IMPORTED_MODULE_2__/* .clear_element */ .ho)(this); // remove text_container element, etc
             this.set_text(text); // will be added directly to this because no text_container
         }
     }
@@ -32961,7 +33048,7 @@ class XbCellElement extends HTMLElement {
             return this.#codemirror.get_undo_info();
         }
         else {
-            return (0,_codemirror__WEBPACK_IMPORTED_MODULE_2__/* .create_null_codemirror_undo_info */ .M)(this.is_neutral());
+            return (0,_codemirror__WEBPACK_IMPORTED_MODULE_3__/* .create_null_codemirror_undo_info */ .M)(this.is_neutral());
         }
     }
     /** override focus() so that we can direct focus to the contained "textarea"
@@ -33009,7 +33096,7 @@ class XbCellElement extends HTMLElement {
     // === ID, TYPE ===
     ensure_id() {
         if (!this.id) {
-            this.id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_5__/* .generate_object_id */ .Q7)();
+            this.id = (0,lib_sys_uuid__WEBPACK_IMPORTED_MODULE_6__/* .generate_object_id */ .Q7)();
         }
     }
     get type() { return this.getAttribute(XbCellElement.#attribute__type) ?? this.CLASS.default_type; }
@@ -33018,7 +33105,7 @@ class XbCellElement extends HTMLElement {
         this.#codemirror?.set_language_from_type(this.type);
     }
     // === DOM ===
-    get_output_element_selector() { return `[data-source-element="${this.id}"]`; }
+    get_output_element_selector() { return `[${src_output_context_types__WEBPACK_IMPORTED_MODULE_1__/* .OutputContextLike */ .s.attribute__data_source_element}="${this.id}"]`; }
     /** reset the cell, removing all associated output elements
      */
     reset() {
@@ -33059,13 +33146,13 @@ class XbCellElement extends HTMLElement {
         ];
         //!!! attributes values' containing " character are incorrectly translated to \"
         for (const name of this.getAttributeNames()) {
-            if (name !== 'data-active' || include_active_cell_setting) {
+            if (name !== this.CLASS.attribute__active || include_active_cell_setting) {
                 const value = this.getAttribute(name);
                 if (!value) {
                     open_tag_segments.push(name);
                 }
                 else {
-                    open_tag_segments.push(`${name}=${(0,lib_sys_string_tools__WEBPACK_IMPORTED_MODULE_6__/* .make_string_literal */ .xA)(value, true)}`);
+                    open_tag_segments.push(`${name}=${(0,lib_sys_string_tools__WEBPACK_IMPORTED_MODULE_7__/* .make_string_literal */ .xA)(value, true)}`);
                 }
             }
         }
@@ -33497,8 +33584,9 @@ class XbManager {
         }
         return el;
     }
-    get cell_view() { return document.documentElement.getAttribute('data-cell-view') ?? src_init__WEBPACK_IMPORTED_MODULE_0__/* .cell_view_values_default */ .I7; }
-    get interactive() { return (this.cell_view !== 'presentation'); }
+    get cell_view() { return document.documentElement.getAttribute(src_init__WEBPACK_IMPORTED_MODULE_0__/* .cell_view_attribute_name */ .Qy) ?? src_init__WEBPACK_IMPORTED_MODULE_0__/* .cell_view_values_default */ .I7; }
+    get in_presentation_view() { return (this.cell_view === 'presentation'); }
+    get interactive() { return (!this.in_presentation_view || this.active_cell?.shown_in_presentation); }
     get cell_parent() { return this.main_element; }
     get activity_manager() { return this.#activity_manager; }
     get editable() { return this.#editable; }
@@ -33641,7 +33729,7 @@ class XbManager {
         this.set_menu_style(with_menubar);
     }
     #set_initial_active_cell() {
-        const active_cell = (document.querySelector(`${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_9__/* .XbCellElement */ .l.custom_element_name}[data-active]`) ?? // cell currently set as active
+        const active_cell = (document.querySelector(`${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_9__/* .XbCellElement */ .l.custom_element_name}[${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_9__/* .XbCellElement */ .l.attribute__active}]`) ?? // cell currently set as active
             document.querySelector(`${src_xb_cell_element___WEBPACK_IMPORTED_MODULE_9__/* .XbCellElement */ .l.custom_element_name}`) ?? // first cell
             this.create_cell() // new cell
         );
@@ -33960,8 +34048,10 @@ class XbManager {
         //!!! review this !!!
         const menu = this.#menu;
         if (menu) {
+            const presentation = this.in_presentation_view;
             const interactive = this.interactive;
-            const cells = this.get_cells();
+            const all_cells = this.get_cells();
+            const cells = all_cells.filter(cell => cell.showing);
             const active_cell = this.active_cell;
             const active_index = active_cell ? cells.indexOf(active_cell) : -1;
             const editable = this.editable;
@@ -33969,27 +34059,28 @@ class XbManager {
             const cell_view = this.cell_view;
             const has_save_handle = !!this.#file_handle;
             const is_neutral = this.is_neutral();
-            menu.set_menu_state('clear-all', { enabled: interactive && editable });
+            menu.set_menu_state('clear-all', { enabled: !presentation && editable });
             menu.set_menu_state('save', { enabled: !is_neutral && has_save_handle });
             // no update to command 'save-as'
             // no update to command 'export'
-            menu.set_menu_state('toggle-auto-eval', { checked: (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .get_auto_eval */ .u1)(), enabled: interactive });
+            menu.set_menu_state('toggle-auto-eval', { checked: (0,src_init__WEBPACK_IMPORTED_MODULE_0__/* .get_auto_eval */ .u1)(), enabled: !presentation });
             // no update to command 'settings'
             menu.set_menu_state('eval', { enabled: interactive && editable && !!active_cell });
             menu.set_menu_state('eval-and-refocus', { enabled: interactive && editable && !!active_cell });
             menu.set_menu_state('eval-before', { enabled: interactive && editable && !!active_cell });
             menu.set_menu_state('eval-all', { enabled: interactive && editable && !!active_cell });
             menu.set_menu_state('stop', { enabled: active_cell?.can_stop });
-            menu.set_menu_state('stop-all', { enabled: cells.some(cell => cell.can_stop) });
+            menu.set_menu_state('stop-all', { enabled: all_cells.some(cell => cell.can_stop) });
             menu.set_menu_state('reset', { enabled: interactive && editable });
-            menu.set_menu_state('reset-all', { enabled: interactive && editable });
+            menu.set_menu_state('reset-all', { enabled: !presentation && editable });
             menu.set_menu_state('focus-up', { enabled: interactive && !!active_cell && active_index > 0 });
             menu.set_menu_state('focus-down', { enabled: interactive && !!active_cell && active_index < cells.length - 1 });
-            menu.set_menu_state('move-up', { enabled: interactive && !!active_cell && active_index > 0 });
-            menu.set_menu_state('move-down', { enabled: interactive && !!active_cell && active_index < cells.length - 1 });
-            menu.set_menu_state('add-before', { enabled: interactive && editable && !!active_cell });
-            menu.set_menu_state('add-after', { enabled: interactive && editable && !!active_cell });
-            menu.set_menu_state('delete', { enabled: interactive && editable && !!active_cell });
+            menu.set_menu_state('move-up', { enabled: !presentation && !!active_cell && active_index > 0 });
+            menu.set_menu_state('move-down', { enabled: !presentation && !!active_cell && active_index < cells.length - 1 });
+            menu.set_menu_state('add-before', { enabled: !presentation && editable && !!active_cell });
+            menu.set_menu_state('add-after', { enabled: !presentation && editable && !!active_cell });
+            menu.set_menu_state('duplicate', { enabled: !presentation && editable && !!active_cell });
+            menu.set_menu_state('delete', { enabled: !presentation && editable && !!active_cell });
             menu.set_menu_state('set-type-plain', { checked: (cell_type === 'plain'), enabled: interactive });
             menu.set_menu_state('set-type-markdown', { checked: (cell_type === 'markdown'), enabled: interactive });
             menu.set_menu_state('set-type-tex', { checked: (cell_type === 'tex'), enabled: interactive });
@@ -34036,20 +34127,24 @@ class XbManager {
     get_cells() {
         return [...document.getElementsByTagName(src_xb_cell_element___WEBPACK_IMPORTED_MODULE_9__/* .XbCellElement */ .l.custom_element_name)];
     }
-    /** return the cell that is adjacent to the given cell, either forward (or
-     *  alternately backward) from the reference.
+    /** Return the cell that is adjacent to the given cell, either forward (or
+     * alternately backward) from the reference.  If include_non_shown is false,
+     * then only currently shown cells are considered.
      * @param {undefined|XbCellElement} reference (default: this.active_cell)
      * @param {Boolean} forward
+     * @param {Boolean} include_non_shown
      * @return {undefined|XbCellElement} the adjacent cell, or undefined if
      *     reference does not exist in the document or if there is
      *     no such adjacent cell.
      */
-    adjacent_cell(reference, forward = false) {
+    adjacent_cell(reference, forward = false, include_non_shown = false) {
         if (reference && reference.xb !== this) {
             throw new Error('unexpected: reference cell has a different xb');
         }
         else {
-            const cells = this.get_cells();
+            const cells = include_non_shown
+                ? this.get_cells()
+                : this.get_cells().filter(cell => cell.showing);
             const pos = reference ? cells.indexOf(reference) : -1;
             if (pos === -1) {
                 return undefined;
@@ -34179,7 +34274,7 @@ function _scroll_target_into_view(command_context) {
 // is true iff the command was successfully handled.  It is assumed that
 // command_context.target === command_context.dm.active_cell on entry.
 async function command_handler__clear_all(command_context) {
-    if (!command_context.dm.interactive) {
+    if (command_context.dm.in_presentation_view) {
         return false;
     }
     if (!await lib_ui_dialog___WEBPACK_IMPORTED_MODULE_2__/* .ConfirmDialog */ .TM.run('Clear document?')) {
@@ -34199,7 +34294,7 @@ async function command_handler__export(command_context) {
     return command_context.dm.perform_save(true, true);
 }
 function command_handler__toggle_auto_eval(command_context) {
-    if (!command_context.dm.interactive) {
+    if (command_context.dm.in_presentation_view) {
         return false;
     }
     const new_auto_eval_setting = !(0,src_init__WEBPACK_IMPORTED_MODULE_3__/* .get_auto_eval */ .u1)();
@@ -34277,13 +34372,16 @@ async function command_handler__eval_and_refocus(command_context) {
         return false;
     }
     else {
-        const next_cell = command_context.dm.adjacent_cell(command_context.target, true) ?? command_context.dm.create_cell();
-        next_cell.scroll_into_view(true);
+        const adjacent_cell = command_context.dm.adjacent_cell(command_context.target, true);
+        const next_cell = adjacent_cell
+            ? adjacent_cell
+            : (command_context.dm.in_presentation_view ? undefined : command_context.dm.create_cell());
+        next_cell?.scroll_into_view(true);
         return true;
     }
 }
 async function multi_eval_helper(command_context, eval_all = false) {
-    if (!command_context.dm.interactive) {
+    if (command_context.dm.in_presentation_view) {
         return false;
     }
     _scroll_target_into_view(command_context);
@@ -34344,6 +34442,9 @@ function command_handler__reset(command_context) {
     }
 }
 function command_handler__reset_all(command_context) {
+    if (command_context.dm.in_presentation_view) {
+        return false;
+    }
     command_context.dm.reset();
     return true;
 }
@@ -34384,7 +34485,7 @@ function command_handler__focus_down(command_context) {
     }
 }
 function move_helper(command_context, move_down) {
-    if (!command_context.dm.interactive) {
+    if (command_context.dm.in_presentation_view) {
         return false;
     }
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .l)) {
@@ -34437,7 +34538,7 @@ function command_handler__move_down(command_context) {
     return move_helper(command_context, true);
 }
 function add_cell_helper(command_context, add_before, duplicate = false) {
-    if (!command_context.dm.interactive) {
+    if (command_context.dm.in_presentation_view) {
         return false;
     }
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .l)) {
@@ -34475,7 +34576,7 @@ function command_handler__duplicate(command_context) {
     return add_cell_helper(command_context, false, true);
 }
 async function command_handler__delete(command_context) {
-    if (!command_context.dm.interactive) {
+    if (command_context.dm.in_presentation_view) {
         return false;
     }
     if (!(command_context.target instanceof src_xb_cell_element___WEBPACK_IMPORTED_MODULE_0__/* .XbCellElement */ .l)) {

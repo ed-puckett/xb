@@ -90,7 +90,7 @@ async function initialize_document(): Promise<void> {
         // validate html[data-cell-view]
         const cell_view = document.documentElement.getAttribute(cell_view_attribute_name);
         if (cell_view && !_valid_cell_view_values.includes(cell_view)) {
-            throw new Error(`<html> attribute data-cell-view must be unset or one of: "${_valid_cell_view_values.join('", "')}"`);
+            throw new Error(`<html> attribute ${cell_view_attribute_name} must be unset or one of: "${_valid_cell_view_values.join('", "')}"`);
         }
 
         // establish head element if not already present

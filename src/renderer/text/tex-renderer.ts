@@ -56,7 +56,7 @@ export class TeXRenderer extends TextBasedRenderer {
 
         const parent = ocx.create_child({
             attrs: {
-                'data-source-media-type': this.media_type,
+                [OutputContextLike.attribute__data_source_media_type]: this.media_type,
             },
             style,
         });
