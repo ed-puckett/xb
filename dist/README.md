@@ -1,4 +1,4 @@
-# *x*b : an *anything* book
+# *x*b : a *variable* book
 
 ## Overview
 
